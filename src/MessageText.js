@@ -1,10 +1,13 @@
-import React from "react";
-import { socket } from "./service/socket";
+import React, { useContext } from "react";
+import { SocketContext } from "./service/socket";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import SimpleBar from "simplebar-react";
+import "simplebar/dist/simplebar.min.css";
+import "animate.css";
 
-function MessageText(props) {
-  const [noti, setNoti] = React.useState([]);
+function MessageText({ msgList, noti, setNoti, dummy }) {
+  const socket = useContext(SocketContext);
   const Swal1 = withReactContent(Swal);
 
   React.useEffect(() => {
@@ -24,14 +27,28 @@ function MessageText(props) {
     });
   }
 
-  const MessageList = props.msgList.map((messageObj, index) => {
+  function fromSelf(messageObj) {
+    return socket.id === messageObj.id ? true : false;
+  }
+
+  const MessageList = msgList.map((messageObj, index) => {
     return (
       <div
-        className="inline shadow bg-white rounded-lg m-2 p-2"
+        className={
+          "flex " +
+          (fromSelf(messageObj) ? "flex-row-reverse mr-3" : "flex-row ml-3")
+        }
         key={messageObj.id + index}
       >
-        <b className="inline mr-1">{messageObj.id}:</b>
-        <p className="inline">{messageObj.text}</p>
+        <div
+          className={
+            "inline-block max-w-xl shadow rounded-2xl mb-1 p-3 " +
+            (fromSelf(messageObj) ? "bg-blue-400 text-white" : "bg-gray-200")
+          }
+        >
+          {!fromSelf(messageObj) ? <b>{messageObj.id}</b> : null}
+          <p className="break-words">{messageObj.text}</p>
+        </div>
       </div>
     );
   });
@@ -43,13 +60,11 @@ function MessageText(props) {
   ));
 
   return (
-    <>
-      <div className="flex flex-col min-h-500 h-4/6 w-5/6 mx-auto overflow-y-scroll border-2 border-black bg-gray-100 rounded-md p-2">
-        {NotiList}
-        {MessageList}
-        <div ref={props.dummy}></div>
-      </div>
-    </>
+    <SimpleBar className="h-4/6 w-9/12 mx-auto overflow-y-auto overflow-x-hidden border-2 bg-gray-100 rounded-md p-2">
+      <div className="mb-3">{NotiList}</div>
+      {MessageList}
+      <div ref={dummy}></div>
+    </SimpleBar>
   );
 }
 
