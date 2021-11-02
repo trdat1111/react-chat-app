@@ -6,16 +6,26 @@ import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import "animate.css";
 
-function MessageText({ msgList, noti, setNoti, dummy }) {
+interface Props {
+  msgList: {
+    id: string;
+    text: string;
+  }[];
+  noti: string[];
+  setNoti: React.Dispatch<React.SetStateAction<string[]>>;
+  dummy: any;
+}
+
+const MessageText: React.FC<Props> = ({ msgList, noti, setNoti, dummy }) => {
   const socket = useContext(SocketContext);
   const Swal1 = withReactContent(Swal);
 
   React.useEffect(() => {
-    socket.on("show-user-joined", (msg) => showNoti(msg));
-    socket.on("show-disconnect", (msg) => showNoti(msg));
+    socket.on("show-user-joined", (msg: string) => showNoti(msg));
+    socket.on("show-disconnect", (msg: string) => showNoti(msg));
   });
 
-  function showNoti(msg) {
+  function showNoti(msg: string) {
     setNoti([...noti, msg]);
     Swal1.fire({
       title: <p>{msg}</p>,
@@ -27,7 +37,7 @@ function MessageText({ msgList, noti, setNoti, dummy }) {
     });
   }
 
-  function fromSelf(messageObj) {
+  function fromSelf(messageObj: { id: string; text: string }) {
     return socket.id === messageObj.id ? true : false;
   }
 
@@ -66,6 +76,6 @@ function MessageText({ msgList, noti, setNoti, dummy }) {
       <div ref={dummy}></div>
     </SimpleBar>
   );
-}
+};
 
 export default MessageText;

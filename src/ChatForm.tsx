@@ -5,35 +5,37 @@ import { AiOutlineSend } from "react-icons/ai";
 
 // components
 import TopBar from "./TopBar";
+import { Auth, User } from "firebase/auth";
 
-function ChatForm({ auth, user }) {
+interface Props {
+  auth: Auth;
+  user: User | null | undefined;
+}
+
+const ChatForm: React.FC<Props> = ({ auth, user }) => {
   const socket = useContext(SocketContext);
   const [formValue, setFormValue] = useState("");
-  const [msgList, setMsgList] = useState([]);
-  const dummy = useRef();
+  const [msgList, setMsgList] = useState<{ id: string; text: string }[]>([]);
+  const dummy: any = useRef();
   const [roomValue, setRoomValue] = useState("");
-  const [noti, setNoti] = React.useState([]);
+  const [noti, setNoti] = React.useState<string[]>([]);
 
   useEffect(() => {
-    // socket.on("connect", () => {
-    //   setId(socket.id);
-    //   console.log(socket.id);
-    // });
-
-    socket.on("received-message", (messageObj) => {
-      setMsgList([...msgList, messageObj]);
-    });
+    socket.on(
+      "received-message",
+      (messageObj: { id: string; text: string }) => {
+        setMsgList([...msgList, messageObj]);
+      }
+    );
 
     dummy.current.scrollIntoView({
       behavior: "smooth",
     });
+  }, [msgList, socket]);
 
-    return () => socket.disconnect();
-  }, [socket, msgList]);
-
-  function handleSubmit(e) {
+  function handleSubmit(e: React.KeyboardEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (formValue && !formValue.includes(" ")) {
+    if (formValue && formValue.replace(/\s/g, "").length) {
       socket.emit("emit-message", socket.id, formValue, roomValue);
       setMsgList([...msgList, { id: socket.id, text: formValue }]);
       setFormValue("");
@@ -82,6 +84,6 @@ function ChatForm({ auth, user }) {
       </form>
     </>
   );
-}
+};
 
 export default ChatForm;

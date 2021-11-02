@@ -1,9 +1,33 @@
 import React, { useContext } from "react";
 import Swal from "sweetalert2";
 import { SocketContext } from "./service/socket";
-import { signOut } from "firebase/auth";
+import { Auth, signOut, User } from "firebase/auth";
 
-function TopBar({ setRoomValue, noti, setNoti, setMsgList, auth, user }) {
+interface Props {
+  setRoomValue: React.Dispatch<React.SetStateAction<string>>;
+  // id: string;
+  noti: string[];
+  setNoti: React.Dispatch<React.SetStateAction<string[]>>;
+  setMsgList: React.Dispatch<
+    React.SetStateAction<
+      {
+        id: string;
+        text: string;
+      }[]
+    >
+  >;
+  auth: Auth;
+  user: User | null | undefined;
+}
+
+const TopBar: React.FC<Props> = ({
+  setRoomValue,
+  noti,
+  setNoti,
+  setMsgList,
+  auth,
+  user,
+}) => {
   const socket = useContext(SocketContext);
 
   async function joinRoom() {
@@ -16,7 +40,7 @@ function TopBar({ setRoomValue, noti, setNoti, setMsgList, auth, user }) {
       confirmButtonColor: "#10B981",
     });
     if (val && val !== "") {
-      socket.emit("join-room", val, (msg) => {
+      socket.emit("join-room", val, (msg: string) => {
         setRoomValue(val);
         setNoti([...noti, msg]);
         setMsgList([]);
@@ -43,7 +67,7 @@ function TopBar({ setRoomValue, noti, setNoti, setMsgList, auth, user }) {
   return (
     <div className="inline-flex flex-row w-9/12 justify-between my-3 h-auto">
       <h3 className="text-xl font-bold pt-1">
-        {socket.id
+        {socket.id && user
           ? `Hello ${user.displayName}. Your id is: ${socket.id}`
           : `Server not response`}
       </h3>
@@ -58,6 +82,6 @@ function TopBar({ setRoomValue, noti, setNoti, setMsgList, auth, user }) {
       </div>
     </div>
   );
-}
+};
 
 export default TopBar;

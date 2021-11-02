@@ -1,9 +1,9 @@
-import ChatForm from "./ChatForm";
 import { SocketContext, socket } from "./service/socket";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import "firebase/firestore";
+import ChatForm from "./ChatForm";
 // import SideBar from "./SideBar";
 // import TopBar from "./TopBar";
 
