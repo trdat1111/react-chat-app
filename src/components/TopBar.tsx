@@ -1,71 +1,23 @@
-import React, { useContext } from "react";
-import Swal from "sweetalert2";
-import { SocketContext } from "../service/socket";
-import { signOut } from "firebase/auth";
-import {
-  addDoc,
-  arrayUnion,
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
+import React from "react";
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
+import { Toast, Modal } from "../service/sweet-alert";
+import { useCurrentRoomStore, useRoomDataStore } from "../store";
 
 interface Props {
-  noti: string[];
-  setNoti: React.Dispatch<React.SetStateAction<string[]>>;
-  setMsgList: React.Dispatch<React.SetStateAction<DocumentData[] | {}[]>>;
-  rooms: any;
-  setRooms: any;
+  createRoom: any;
 }
 
-const TopBar: React.FC<Props> = ({
-  noti,
-  setNoti,
-  setMsgList,
-  rooms,
-  setRooms,
-}) => {
-  const socket = useContext(SocketContext);
+const TopBar: React.FC<Props> = ({ createRoom }) => {
   const user = auth.currentUser;
-  const roomCollection = collection(db, "group_messages");
-
-  async function createRoom() {
-    const { value: val } = await Swal.fire({
-      title: "Enter a room to create",
-      input: "text",
-      inputPlaceholder: "Aa",
-      showCancelButton: true,
-      showCloseButton: true,
-      confirmButtonColor: "#10B981",
-    });
-    if (val && val !== "") {
-      const roomRef = await addDoc(roomCollection, {
-        room_name: val,
-      });
-
-      const roomSnapshot = await getDoc(roomRef);
-      if (roomSnapshot.exists()) {
-        console.log(roomSnapshot.data());
-        setRooms([...rooms, roomSnapshot.data()]);
-      }
-      // initJoin(roomRef);
-      await updateDoc(roomRef, {
-        joined_users: arrayUnion(user?.uid),
-      });
-    }
-  }
+  const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
+  const addRoomData = useRoomDataStore((state) => state.addRoomData);
 
   async function joinRoom() {
-    const { value: val } = await Swal.fire({
+    const { value: val } = await Modal.fire({
       title: "Enter a room ID to join in",
       input: "text",
-      inputPlaceholder: "Aa",
-      showCancelButton: true,
-      showCloseButton: true,
-      confirmButtonColor: "#10B981",
+      confirmButtonColor: "#8B5CF6",
     });
     if (val && val !== "") {
       // socket.emit("join-room", val, (msg: string) => {
@@ -76,37 +28,36 @@ const TopBar: React.FC<Props> = ({
       const roomRef = doc(db, `group_messages/${val}`);
       const roomSnapshot = await getDoc(roomRef);
       if (roomSnapshot.exists()) {
-        // add userid to room doc and setRooms
-        await updateDoc(roomRef, {
-          joined_users: arrayUnion(user?.uid),
+        if (roomSnapshot.data().joined_users.includes(user?.uid)) {
+          Toast.fire({
+            icon: "error",
+            title: "You're already joined this room!",
+          });
+        } else {
+          // add userid to room doc and setRooms
+          await updateDoc(roomRef, {
+            joined_users: arrayUnion(user?.uid),
+          });
+          addRoomData(roomSnapshot.data());
+        }
+      } else {
+        Toast.fire({
+          icon: "error",
+          title: "Room not exist!",
         });
-        setRooms([...rooms, roomSnapshot.data()]);
-      } else console.error("Room not exist!");
+      }
     }
-  }
-
-  function SignOut(): JSX.Element {
-    function handleSignOut() {
-      signOut(auth);
-      socket.disconnect();
-    }
-
-    return (
-      <button
-        className="button bg-red-400 hover:bg-red-500 mx-1"
-        onClick={handleSignOut}
-      >
-        Sign out
-      </button>
-    );
   }
 
   return (
-    <div className="inline-flex flex-row w-9/12 justify-between my-3 h-auto">
+    <div className="inline-flex flex-row items-center justify-between h-16 px-3">
       <h3 className="text-xl font-bold pt-1">
-        {socket.id && user
+        {/* {socket.id && user
           ? `Hello ${user.displayName}`
-          : `Server not response`}
+          : `Server not response`} */}
+        <ul>
+          <li>{currentRoom?.roomName}</li>
+        </ul>
       </h3>
       <div>
         <button
@@ -121,7 +72,6 @@ const TopBar: React.FC<Props> = ({
         >
           Create room
         </button>
-        <SignOut />
       </div>
     </div>
   );

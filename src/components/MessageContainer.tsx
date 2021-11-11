@@ -1,54 +1,36 @@
 import React, { useContext } from "react";
 import { SocketContext } from "../service/socket";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import "animate.css";
-import { DocumentData } from "@firebase/firestore";
 import { auth } from "../service/firebase";
+import { Toast } from "../service/sweet-alert";
+import moment from "moment";
+import totoro from "../assets/totoro.png";
+import { useCurrentRoomStore, useMsgListStore, useNotiStore } from "../store";
+import { MessageObj } from "../type";
 
 interface Props {
-  msgList: {}[] | DocumentData;
-  noti: string[];
-  setNoti: React.Dispatch<React.SetStateAction<string[]>>;
   dummy: any;
-  currentRoom: any;
 }
-
-type MessageObj = {
-  id: string;
-  user: string;
-  text: string;
-  created_at: any;
-  photoURL: any;
-};
-
-const MessageContainer: React.FC<Props> = ({
-  msgList,
-  noti,
-  setNoti,
-  dummy,
-  currentRoom,
-}) => {
+const MessageContainer: React.FC<Props> = ({ dummy }) => {
   const socket = useContext(SocketContext);
   const user = auth.currentUser;
-  const Swal1 = withReactContent(Swal);
+  const { notiList, setNoti } = useNotiStore();
+  const msgList = useMsgListStore((state) => state.msgList);
+  const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
 
   React.useEffect(() => {
     socket.on("show-user-joined", (msg: string) => showNoti(msg));
     socket.on("show-disconnect", (msg: string) => showNoti(msg));
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function showNoti(msg: string) {
-    setNoti([...noti, msg]);
-    Swal1.fire({
+    setNoti(msg);
+    Toast.fire({
       title: <p>{msg}</p>,
       icon: "info",
-      toast: true,
-      timer: 3000,
-      position: "top-end",
-      showConfirmButton: false,
     });
   }
 
@@ -67,18 +49,22 @@ const MessageContainer: React.FC<Props> = ({
           }
           key={messageObj.id + index}
         >
-          <img
-            src={messageObj.photoURL}
-            className="align-middle rounded-full w-9 h-9 m-1"
-            alt="author"
-          />
+          {messageObj.photoURL && (
+            <img
+              src={messageObj.photoURL}
+              className="align-middle rounded-full w-9 h-9 m-1"
+              alt="author"
+            />
+          )}
           <div
             className={`flex items-center group ${
               fromSelf(messageObj) ? "flex-row" : "flex-row-reverse"
             }`}
           >
-            <div className="opacity-0 ring-1 bg-white h-7 rounded-md font-mono text-sm transition-all duration-100 mx-2 px-1 pt-1 group-hover:opacity-100">
-              {messageObj.created_at.toDate().toLocaleString()}
+            <div className="opacity-0 ring-1 bg-white h-6 rounded-md font-mono text-xs delay-200 transition-all duration-100 mx-2 px-1 pt-1 group-hover:opacity-90">
+              {moment(messageObj.created_at.toDate()).format(
+                "dddd, MMM D YYYY, HH:mm"
+              )}
             </div>
             <div
               className={`inline-block max-w-xl shadow rounded-2xl my-1 p-3 ${
@@ -93,17 +79,22 @@ const MessageContainer: React.FC<Props> = ({
       );
     });
 
-  const NotiList = noti.map((noti, index) => (
+  const NotiList = notiList.map((noti, index) => (
     <div key={index} className="text-green-600">
       {noti}
     </div>
   ));
 
   return (
-    <SimpleBar className="ring-1 h-4/6 w-9/12 mx-auto overflow-y-auto overflow-x-hidden border-2 bg-gray-100 rounded-md p-2">
-      {currentRoom}
+    <SimpleBar className="overflow-y-auto h-4/5 border-t-2 border-b-2 overflow-x-hidden bg-gray-100 p-2">
       <div className="mb-3">{NotiList}</div>
       {MessageList}
+      {!currentRoom && (
+        <div className="flex flex-col justify-center h-96 items-center">
+          <img src={totoro} alt="" className="flex max-w-xs max-h-40" />
+          <p className="text-gray-500">A Placeholder Totoro!</p>
+        </div>
+      )}
       <div ref={dummy}></div>
     </SimpleBar>
   );

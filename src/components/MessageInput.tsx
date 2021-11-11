@@ -1,37 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import { AiOutlineSend } from "react-icons/ai";
-import {
-  Timestamp,
-  DocumentData,
-  doc,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
+import { Timestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
+import {
+  useCurrentRoomStore,
+  useFormValueStore,
+  useMsgListStore,
+} from "../store";
+import { MessageObj } from "../type";
 
-interface Props {
-  msgList: {}[] | DocumentData[];
-  setMsgList: React.Dispatch<React.SetStateAction<DocumentData[] | {}[]>>;
-  currentRoom: any;
-}
+interface Props {}
 
-type MessageObj = {
-  id: string;
-  text: string;
-};
-
-const MessageInput: React.FC<Props> = ({
-  msgList,
-  setMsgList,
-  currentRoom,
-}) => {
+const MessageInput: React.FC<Props> = () => {
   // const socket = useContext(SocketContext);
   const user = auth.currentUser;
-  const [formValue, setFormValue] = useState("");
+  const { formValue, setFormValue } = useFormValueStore();
+  const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
+  const addMsgToList = useMsgListStore((state) => state.addMsgToList);
 
-  async function addMsgToFireStore(roomId: string, messageObj: MessageObj) {
-    const roomRef = doc(db, `group_messages/${roomId}`);
-    // await addDoc(collection(ref, "messages"), messageObj);
+  async function addMsgToFireStore(
+    room: typeof currentRoom,
+    messageObj: MessageObj
+  ) {
+    const roomRef = doc(db, `group_messages/${room?.roomId}`);
     await updateDoc(roomRef, {
       messages: arrayUnion(messageObj),
     });
@@ -53,7 +44,7 @@ const MessageInput: React.FC<Props> = ({
         photoURL: user.photoURL,
       };
       // socket.emit("emit-message", socket.id, formValue, roomValue);
-      msgList ? setMsgList([...msgList, message]) : setMsgList([message]);
+      addMsgToList(message);
       addMsgToFireStore(currentRoom, message);
       setFormValue("");
     }
@@ -61,14 +52,14 @@ const MessageInput: React.FC<Props> = ({
 
   return (
     <form
-      className="flex justify-center w-full m-3"
+      className="flex justify-center m-2"
       onSubmit={handleSubmit}
       onKeyPress={(e) => {
         if (e.key === "Enter") handleSubmit(e);
       }}
     >
       <textarea
-        className="border w-4/6 h-full ring-1 focus:outline-none focus:ring-green-500 transition duration-300 ease-in-out rounded-md p-2"
+        className="border w-full h-full ring-1 focus:outline-none focus:ring-green-500 transition duration-300 ease-in-out rounded-md p-2"
         placeholder="Aa"
         style={{ resize: "none" }}
         value={formValue}
@@ -77,7 +68,7 @@ const MessageInput: React.FC<Props> = ({
           if (e.key === "Enter") e.preventDefault();
         }}
       />
-      <button type="submit" className="m-3">
+      <button type="submit" className="m-2">
         <AiOutlineSend
           size="30"
           className="text-gray-600 hover:text-green-500 transition duration-300 ease-in-out cursor-pointer"
