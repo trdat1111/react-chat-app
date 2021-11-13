@@ -7,6 +7,7 @@ import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { signOut } from "firebase/auth";
 import { SocketContext } from "../service/socket";
 import { useCurrentRoomStore, useRoomDataStore } from "../store";
+import { Tooltip } from "@chakra-ui/react";
 
 interface Props {
   createRoom: any;
@@ -31,7 +32,11 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
           currentRoom?.roomId === room.id ? "bg-gray-200" : "bg-white"
         }`}
           onClick={() =>
-            setCurrentRoom({ roomId: room.id, roomName: room.room_name })
+            setCurrentRoom({
+              roomId: room.id,
+              roomName: room.room_name,
+              totalMember: room.joined_users.length,
+            })
           }
         >
           <div className="flex w-12 h-12 rounded-full group-hover:rounded-xl bg-gray-200 m-2 justify-center items-center">
@@ -66,7 +71,7 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
 
     return (
       <button
-        className="button bg-red-400 hover:bg-red-500 ml-8"
+        className="button bg-red-400 hover:bg-red-500"
         onClick={handleSignOut}
       >
         Sign out
@@ -81,12 +86,14 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
         <div className="flex flex-row items-center justify-between p-2">
           <p className="text-lg font-bold uppercase">Room</p>
           <div className="flex flex-row">
-            <div
-              onClick={createRoom}
-              className="flex w-9 h-9 rounded-full group-hover:rounded-xl transition-all duration-200 bg-gray-200 m-2 justify-center items-center hover:bg-gray-300 cursor-pointer"
-            >
-              <AiOutlineUsergroupAdd className="w-7 h-7" />
-            </div>
+            <Tooltip label="Create a room">
+              <div
+                onClick={createRoom}
+                className="flex w-9 h-9 rounded-full group-hover:rounded-xl transition-all duration-200 bg-gray-200 m-2 justify-center items-center hover:bg-gray-300 cursor-pointer"
+              >
+                <AiOutlineUsergroupAdd className="w-7 h-7" />
+              </div>
+            </Tooltip>
           </div>
         </div>
         {Rooms}
@@ -97,9 +104,9 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
           className="w-12 h-12 rounded-full mr-1"
           alt="CurrentUserAvt"
         />
-        <div className="flex flex-col">
-          <p className="font-bold text-sm">{user?.displayName}</p>
-          <p className="text-sm">{user?.email}</p>
+        <div className="flex flex-col w-48">
+          <p className="font-bold text-sm truncate">{user?.displayName}</p>
+          <p className="text-sm truncate">{user?.email}</p>
         </div>
         <SignOut />
       </div>

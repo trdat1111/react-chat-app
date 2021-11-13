@@ -3,6 +3,7 @@ import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
 import { Toast, Modal } from "../service/sweet-alert";
 import { useCurrentRoomStore, useRoomDataStore } from "../store";
+import { BsPerson } from "react-icons/bs";
 
 interface Props {
   createRoom: any;
@@ -55,9 +56,17 @@ const TopBar: React.FC<Props> = ({ createRoom }) => {
         {/* {socket.id && user
           ? `Hello ${user.displayName}`
           : `Server not response`} */}
-        <ul>
-          <li>{currentRoom?.roomName}</li>
-        </ul>
+        {currentRoom && (
+          <>
+            <ul>
+              <li>{currentRoom?.roomName}</li>
+            </ul>
+            <div className="flex flex-row items-center text-base font-normal">
+              <BsPerson className="mr-1" />
+              <p>{currentRoom?.totalMember} members</p>
+            </div>
+          </>
+        )}
       </h3>
       <div>
         <button

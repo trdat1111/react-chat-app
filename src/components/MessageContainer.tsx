@@ -6,7 +6,7 @@ import "animate.css";
 import { auth } from "../service/firebase";
 import { Toast } from "../service/sweet-alert";
 import moment from "moment";
-import totoro from "../assets/totoro.png";
+import zustand from "../assets/zustand.png";
 import { useCurrentRoomStore, useMsgListStore, useNotiStore } from "../store";
 import { MessageObj } from "../type";
 
@@ -91,7 +91,7 @@ const MessageContainer: React.FC<Props> = ({ dummy }) => {
       {MessageList}
       {!currentRoom && (
         <div className="flex flex-col justify-center h-96 items-center">
-          <img src={totoro} alt="" className="flex max-w-xs max-h-40" />
+          <img src={zustand} alt="" className="flex max-w-xs max-h-40" />
           <p className="text-gray-500">A Placeholder Totoro!</p>
         </div>
       )}

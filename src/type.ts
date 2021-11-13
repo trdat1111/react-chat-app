@@ -3,7 +3,7 @@ import { DocumentData, Timestamp } from "@firebase/firestore";
 export type RoomData =
   | {
       id: string;
-      joined_user: [""];
+      joined_users: [""];
       room_name: "";
       messages: {}[];
     }

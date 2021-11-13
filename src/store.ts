@@ -70,7 +70,7 @@ export const useNotiStore = create<notiState>(
 );
 
 // currentRoom
-type currentRoom = { roomId: string; roomName: string };
+type currentRoom = { roomId: string; roomName: string; totalMember: number };
 
 interface currentRoomState {
   currentRoom: currentRoom | null;
