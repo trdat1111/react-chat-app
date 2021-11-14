@@ -4,7 +4,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        nunito: ["Nunito"],
+        nunito: ["Nunito Sans"],
+        montserrat: ["Montserrat"],
+        Roboto: ["Roboto"],
       },
     },
     container: {

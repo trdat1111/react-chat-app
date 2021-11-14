@@ -51,30 +51,33 @@ const MessageInput: React.FC<Props> = () => {
   }
 
   return (
-    <form
-      className="flex justify-center m-2"
-      onSubmit={handleSubmit}
-      onKeyPress={(e) => {
-        if (e.key === "Enter") handleSubmit(e);
-      }}
-    >
-      <textarea
-        className="border w-full h-full ring-1 focus:outline-none focus:ring-green-500 transition duration-300 ease-in-out rounded-md p-2"
-        placeholder="Aa"
-        style={{ resize: "none" }}
-        value={formValue}
-        onChange={(e) => setFormValue(e.target.value)}
+    <>
+      <input type="file" id="" onChange={(e) => setFormValue(e.target.value)} />
+      <form
+        className="flex justify-center m-2"
+        onSubmit={handleSubmit}
         onKeyPress={(e) => {
-          if (e.key === "Enter") e.preventDefault();
+          if (e.key === "Enter") handleSubmit(e);
         }}
-      />
-      <button type="submit" className="m-2">
-        <AiOutlineSend
-          size="30"
-          className="text-gray-600 hover:text-green-500 transition duration-300 ease-in-out cursor-pointer"
+      >
+        <textarea
+          className="border w-full h-full ring-1 focus:outline-none focus:ring-green-500 transition duration-300 ease-in-out rounded-md p-2"
+          placeholder="Aa"
+          style={{ resize: "none" }}
+          value={formValue}
+          onChange={(e) => setFormValue(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") e.preventDefault();
+          }}
         />
-      </button>
-    </form>
+        <button type="submit" className="m-2">
+          <AiOutlineSend
+            size="30"
+            className="text-gray-600 hover:text-green-500 transition duration-300 ease-in-out cursor-pointer"
+          />
+        </button>
+      </form>
+    </>
   );
 };
 

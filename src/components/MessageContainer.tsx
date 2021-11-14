@@ -63,7 +63,7 @@ const MessageContainer: React.FC<Props> = ({ dummy }) => {
           >
             <div className="opacity-0 ring-1 bg-white h-6 rounded-md font-mono text-xs delay-200 transition-all duration-100 mx-2 px-1 pt-1 group-hover:opacity-90">
               {moment(messageObj.created_at.toDate()).format(
-                "dddd, MMM D YYYY, HH:mm"
+                "HH:mm · MMM D YYYY"
               )}
             </div>
             <div
@@ -71,8 +71,14 @@ const MessageContainer: React.FC<Props> = ({ dummy }) => {
                 fromSelf(messageObj) ? "bg-blue-400 text-white" : "bg-gray-200"
               }`}
             >
-              {!fromSelf(messageObj) ? <b>{messageObj.user}</b> : null}
-              <p className="break-words">{messageObj.text}</p>
+              {!fromSelf(messageObj) ? (
+                <p className="font-nunito text-sm text-gray-500">
+                  {messageObj.user}
+                </p>
+              ) : null}
+              <p className="font-montserrat font-medium text-sm break-words">
+                {messageObj.text}
+              </p>
             </div>
           </div>
         </div>

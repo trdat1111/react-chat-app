@@ -28,8 +28,8 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
         <div
           key={index}
           className={`flex flex-row items-center group
-        hover:bg-green-200 transition-all ease-in-out h-19 rounded-md m-1 cursor-pointer ${
-          currentRoom?.roomId === room.id ? "bg-gray-200" : "bg-white"
+        hover:bg-gray-100 transition-all ease-in-out h-19 rounded-md m-1 cursor-pointer ${
+          currentRoom?.roomId === room.id ? "bg-blue-100" : "bg-white"
         }`}
           onClick={() =>
             setCurrentRoom({
@@ -47,7 +47,7 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
             /> */}
             <GrGroup className="w-6 h-6" />
           </div>
-          <div className="flex flex-col truncate overflow-hidden">
+          <div className="flex flex-col font-sans truncate overflow-hidden">
             <p>{room.room_name}</p>
             {room.messages && (
               <p className="text-sm text-gray-500">
