@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 // import { SocketContext } from "../service/socket";
 import {
   query,
@@ -11,24 +11,23 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
-
-// components
-import TopBar from "./TopBar";
-import MessageContainer from "./MessageContainer";
-import MessageInput from "./MessageInput";
-import { RoomData } from "../type";
-import SideBar from "./SideBar";
 import { Modal } from "../service/sweet-alert";
 import {
   useCurrentRoomStore,
   useMsgListStore,
   useRoomDataStore,
 } from "../store";
+import { RoomDataObj } from "../type";
+
+// components
+import TopBar from "./TopBar";
+import MessageContainer from "./MessageContainer";
+import MessageInput from "./MessageInput";
+import SideBar from "./SideBar";
 
 const App: React.FC = () => {
   // const socket = useContext(SocketContext);
   const user = auth.currentUser;
-  const dummy: any = useRef();
   const { roomData, setRoomData } = useRoomDataStore();
   const { msgList, setMsgList } = useMsgListStore();
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
@@ -41,7 +40,7 @@ const App: React.FC = () => {
     );
 
     const unsubcribe = onSnapshot(roomQuery, (roomSnapshot) => {
-      const arr = roomSnapshot.docs.map((doc) =>
+      const arr: RoomDataObj[] = roomSnapshot.docs.map((doc) =>
         Object.assign(doc.data(), { id: doc.id })
       );
       setRoomData(arr);
@@ -55,17 +54,13 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (currentRoom) {
+    if (currentRoom && roomData) {
       // update messages in realtimes in current room
-      const room = roomData.find((messageObj: RoomData) => {
+      const room = roomData.find((messageObj: RoomDataObj) => {
         return messageObj.id === currentRoom.roomId;
       });
       if (room) setMsgList(room.messages);
     }
-
-    dummy.current.scrollIntoView({
-      behavior: "smooth",
-    });
   }, [currentRoom, roomData, msgList, setMsgList]);
 
   async function createRoom() {
@@ -83,6 +78,7 @@ const App: React.FC = () => {
       if (roomSnapshot.exists()) {
         await updateDoc(roomRef, {
           joined_users: arrayUnion(user?.uid),
+          message: [],
         });
 
         // addRoomData(roomSnapshot.data()); dont necessary because onSnapshot will fetch new room in realtimes
@@ -95,7 +91,7 @@ const App: React.FC = () => {
       <SideBar createRoom={createRoom} />
       <div className="flex flex-col w-full h-full">
         <TopBar createRoom={createRoom} />
-        <MessageContainer dummy={dummy} />
+        <MessageContainer />
         {currentRoom && <MessageInput />}
       </div>
     </>

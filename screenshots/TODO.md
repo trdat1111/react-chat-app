@@ -9,6 +9,8 @@ confirmation when user log out
 - [ ] Retype Typescript
 - [ ] Re-implement socket.io for online and offline status, join room status, disconnect, ...
 - [ ] Refactor code
+- [ ] Add responsive to UI
+- [ ] Fix scrollToBottom
 
 ## Further features:
 - [ ] Leave rooms

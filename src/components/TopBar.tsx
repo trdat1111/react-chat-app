@@ -2,7 +2,7 @@ import React from "react";
 import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
 import { Toast, Modal } from "../service/sweet-alert";
-import { useCurrentRoomStore, useRoomDataStore } from "../store";
+import { useCurrentRoomStore } from "../store";
 import { BsPerson } from "react-icons/bs";
 
 interface Props {
@@ -12,7 +12,6 @@ interface Props {
 const TopBar: React.FC<Props> = ({ createRoom }) => {
   const user = auth.currentUser;
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
-  const addRoomData = useRoomDataStore((state) => state.addRoomData);
 
   async function joinRoom() {
     const { value: val } = await Modal.fire({
@@ -39,7 +38,7 @@ const TopBar: React.FC<Props> = ({ createRoom }) => {
           await updateDoc(roomRef, {
             joined_users: arrayUnion(user?.uid),
           });
-          addRoomData(roomSnapshot.data());
+          // addRoomData(roomSnapshot.data());
         }
       } else {
         Toast.fire({
@@ -48,6 +47,18 @@ const TopBar: React.FC<Props> = ({ createRoom }) => {
         });
       }
     }
+  }
+
+  function shareRoom() {
+    Toast.fire({
+      icon: "info",
+      title: "Share this room ID to your friend:",
+      width: 450,
+      text: currentRoom?.roomId,
+      position: "top",
+      showCloseButton: true,
+      timer: undefined,
+    });
   }
 
   return (
@@ -69,6 +80,12 @@ const TopBar: React.FC<Props> = ({ createRoom }) => {
         )}
       </h3>
       <div>
+        <button
+          className="button bg-blue-500 hover:bg-blue-600 mx-1"
+          onClick={shareRoom}
+        >
+          Share room ID
+        </button>
         <button
           className="button bg-purple-500 hover:bg-purple-600 mx-1"
           onClick={joinRoom}

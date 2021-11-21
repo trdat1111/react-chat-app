@@ -1,6 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { enableIndexedDbPersistence, initializeFirestore, CACHE_SIZE_UNLIMITED  } from "@firebase/firestore";
+import {
+  enableIndexedDbPersistence,
+  initializeFirestore,
+  CACHE_SIZE_UNLIMITED,
+} from "@firebase/firestore";
+import { getStorage } from "@firebase/storage";
 
 export const app = initializeApp({
   apiKey: "AIzaSyDOofSw2v5JmttAA5Zq7NpSt29KRxrMSTE",
@@ -13,13 +18,14 @@ export const app = initializeApp({
 });
 
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 // export const db = getFirestore(app);
 
 export const db = initializeFirestore(app, {
-  cacheSizeBytes: CACHE_SIZE_UNLIMITED
+  cacheSizeBytes: CACHE_SIZE_UNLIMITED,
 });
 
 enableIndexedDbPersistence(db).catch((err) => {
   if (err.code === "failed-precondition") console.log(err.code);
   else if (err.code === "unimplemented") console.log(err.code);
-})
+});

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { MessageObj, RoomData } from "../type";
+import { MessageObj, RoomDataObj } from "../type";
 import { auth } from "../service/firebase";
 import { GrGroup } from "react-icons/gr";
 import moment from "moment";
@@ -8,6 +8,7 @@ import { signOut } from "firebase/auth";
 import { SocketContext } from "../service/socket";
 import { useCurrentRoomStore, useRoomDataStore } from "../store";
 import { Tooltip } from "@chakra-ui/react";
+import { isValidUrl } from "../functions/functions";
 
 interface Props {
   createRoom: any;
@@ -19,18 +20,40 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
   const roomData = useRoomDataStore((state) => state.roomData);
   const { currentRoom, setCurrentRoom } = useCurrentRoomStore();
 
-  const Rooms =
-    roomData &&
-    roomData.map((room: RoomData, index: number) => {
+  function displayLastMsg(room: RoomDataObj) {
+    if (room.messages) {
       const lastMsg: MessageObj = room.messages?.at(-1);
+      let showLastMsg = "";
+      const lastMsgUser = lastMsg.id === user?.uid ? "You" : lastMsg.user;
+
+      if (lastMsg.userData.length + lastMsg.user.length > 21) {
+        showLastMsg = lastMsg.userData.substring(0, 14).concat("...");
+      } else showLastMsg = lastMsg.userData;
+
+      if (isValidUrl(lastMsg.userData)) {
+        showLastMsg = "sent an attachment";
+      }
+
+      const timeStamp = moment(lastMsg.created_at.toDate()).fromNow(true);
 
       return (
+        <p className="text-sm text-gray-500">
+          {lastMsgUser}: {showLastMsg} · {timeStamp}
+        </p>
+      );
+    }
+  }
+
+  const Rooms =
+    roomData &&
+    roomData.map((room: RoomDataObj) => {
+      return (
         <div
-          key={index}
+          key={room.id}
           className={`flex flex-row items-center group
-        hover:bg-gray-100 transition-all ease-in-out h-19 rounded-md m-1 cursor-pointer ${
-          currentRoom?.roomId === room.id ? "bg-blue-100" : "bg-white"
-        }`}
+          hover:bg-gray-100 transition-all ease-in-out h-19 rounded-md m-1 p-2 cursor-pointer ${
+            currentRoom?.roomId === room.id ? "bg-blue-100" : "bg-white"
+          }`}
           onClick={() =>
             setCurrentRoom({
               roomId: room.id,
@@ -47,17 +70,9 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
             /> */}
             <GrGroup className="w-6 h-6" />
           </div>
-          <div className="flex flex-col font-sans truncate overflow-hidden">
+          <div className="flex flex-col font-sans overflow-ellipsis overflow-hidden">
             <p>{room.room_name}</p>
-            {room.messages && (
-              <p className="text-sm text-gray-500">
-                {lastMsg.id === user?.uid ? "You" : lastMsg.user}:{" "}
-                {lastMsg.text.length > 15
-                  ? lastMsg.text.substring(0, 21).concat("...")
-                  : lastMsg.text}{" "}
-                · {moment(lastMsg.created_at.toDate()).fromNow(true)}
-              </p>
-            )}
+            {displayLastMsg(room)}
           </div>
         </div>
       );
@@ -80,8 +95,7 @@ const SideBar: React.FC<Props> = ({ createRoom }) => {
   }
 
   return (
-    // TODO: add create room function to this icon btn
-    <div className="flex flex-col justify-between bg-white max-h-screen border-r-2 w-4/12">
+    <div className="flex flex-col justify-between bg-white max-h-screen border-r-2 max-w-md w-4/12">
       <div className="overflow-y-auto">
         <div className="flex flex-row items-center justify-between p-2">
           <p className="text-lg font-bold uppercase">Room</p>
