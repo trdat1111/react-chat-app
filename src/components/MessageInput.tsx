@@ -14,9 +14,7 @@ import { Tooltip } from "@chakra-ui/react";
 import { Toast } from "../service/sweet-alert";
 import updateNotiCollection from "../functions/updateNotiCollection";
 
-interface Props {}
-
-const MessageInput: React.FC<Props> = () => {
+const MessageInput: React.FC = () => {
   // const socket = useContext(SocketContext);
   const user = auth.currentUser;
   const { formValue, setFormValue } = useFormValueStore();
