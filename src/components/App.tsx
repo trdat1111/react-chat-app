@@ -5,13 +5,11 @@ import {
   onSnapshot,
   collection,
   where,
-  addDoc,
-  getDoc,
   updateDoc,
-  arrayUnion,
+  getDocs,
+  documentId,
 } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
-import { Modal } from "../service/sweet-alert";
 import {
   useCurrentRoomStore,
   useMsgListStore,
@@ -28,9 +26,10 @@ import SideBar from "./SideBar";
 const App: React.FC = () => {
   // const socket = useContext(SocketContext);
   const user = auth.currentUser;
-  const { roomData, setRoomData } = useRoomDataStore();
+  const { roomData, addRoomData, updateMsgInRoom, removeRoom } =
+    useRoomDataStore();
   const { msgList, setMsgList } = useMsgListStore();
-  const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
+  const { currentRoom, setCurrentRoom } = useCurrentRoomStore();
 
   useEffect(() => {
     // fetch room based on joined users and all messages in each room
@@ -40,10 +39,41 @@ const App: React.FC = () => {
     );
 
     const unsubcribe = onSnapshot(roomQuery, (roomSnapshot) => {
-      const arr: RoomDataObj[] = roomSnapshot.docs.map((doc) =>
-        Object.assign(doc.data(), { id: doc.id })
-      );
-      setRoomData(arr);
+      roomSnapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          if (roomData?.length === 0) {
+            // add room on mounted
+            const roomDataObj = { ...change.doc.data(), id: change.doc.id };
+            addRoomData(roomDataObj);
+          }
+        }
+        if (change.type === "modified") {
+          // update room when new message comes
+          updateMsgInRoom(change.doc.id, change.doc.data().messages);
+
+          // set hasNewMsg to true for the rest of users in this room
+          (async () => {
+            const q = query(
+              // query for all users doc in notifications subcollection except current user
+              collection(change.doc.ref, "notifications"),
+              where(documentId(), "!=", change.doc.data().messages?.at(-1).id) // user who sent last msg
+            );
+
+            const snapshot = await getDocs(q);
+            snapshot.forEach(async (doc) => {
+              await updateDoc(doc.ref, {
+                hasNewMsg: true,
+              });
+            });
+          })();
+        }
+        if (change.type === "removed") {
+          // Removed room
+          removeRoom(change.doc.id);
+          setCurrentRoom(null);
+          setMsgList([]);
+        }
+      });
 
       const source = roomSnapshot.metadata.fromCache ? "local cache" : "server";
       console.log(`Room data came from ${source}`);
@@ -56,41 +86,22 @@ const App: React.FC = () => {
   useEffect(() => {
     if (currentRoom && roomData) {
       // update messages in realtimes in current room
-      const room = roomData.find((messageObj: RoomDataObj) => {
-        return messageObj.id === currentRoom.roomId;
+      const currRoom = roomData.find((roomObj: RoomDataObj) => {
+        return roomObj.id === currentRoom.roomId;
       });
-      if (room) setMsgList(room.messages);
-    }
-  }, [currentRoom, roomData, msgList, setMsgList]);
-
-  async function createRoom() {
-    const { value: val } = await Modal.fire({
-      title: "Enter a room to create",
-      input: "text",
-      confirmButtonColor: "#10B981",
-    });
-    if (val && val !== "") {
-      const roomRef = await addDoc(collection(db, "group_messages"), {
-        room_name: val,
-      });
-
-      const roomSnapshot = await getDoc(roomRef);
-      if (roomSnapshot.exists()) {
-        await updateDoc(roomRef, {
-          joined_users: arrayUnion(user?.uid),
-          message: [],
-        });
-
-        // addRoomData(roomSnapshot.data()); dont necessary because onSnapshot will fetch new room in realtimes
+      if (currRoom) {
+        setMsgList(currRoom.messages);
+        // setnewMsgNoti(false);
       }
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRoom, roomData, msgList]);
 
   return (
     <>
-      <SideBar createRoom={createRoom} />
+      <SideBar />
       <div className="flex flex-col w-full h-full">
-        <TopBar createRoom={createRoom} />
+        <TopBar />
         <MessageContainer />
         {currentRoom && <MessageInput />}
       </div>

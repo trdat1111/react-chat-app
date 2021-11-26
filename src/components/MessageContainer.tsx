@@ -10,14 +10,14 @@ import zustand from "../assets/zustand.png";
 import { useCurrentRoomStore, useMsgListStore, useNotiStore } from "../store";
 import { MessageObj } from "../type";
 import { v4 as uuidv4 } from "uuid";
+import isValidUrl from "../functions/isValidUrl";
 
 const MessagePill: React.FC<{
   messageObj: MessageObj;
   fromSelf: (authorId: string) => boolean;
 }> = ({ messageObj, fromSelf }) => {
-  const imageTypes = /(gif|jpe?g|tiff?|png|webp|bmp)$/i; //* not work
-  const otherTypes = [/pptx/, /doc/, /docx/]; //* work
-  // TODO: display image or file correctly
+  const imageTypes = /(gif|jpe?g|tiff?|png|webp|bmp)$/i;
+  // const otherTypes = [/pptx/, /doc/, /docx/];
 
   if (imageTypes.test(messageObj.type)) {
     // if userData is an image
@@ -33,14 +33,12 @@ const MessagePill: React.FC<{
         />
       </div>
     );
-  } else if (otherTypes.some((rx) => rx.test(messageObj.type))) {
+  } else if (isValidUrl(messageObj.userData)) {
     // if userData is a file
     return (
       <div
         className={`inline-block max-w-xl shadow rounded-2xl my-1 p-3 ${
-          fromSelf(messageObj.id)
-            ? "bg-blue-400 hover:bg-blue-500 text-white"
-            : "bg-white hover:bg-gray-100"
+          fromSelf(messageObj.id) ? "bg-blue-400 text-white" : "bg-white"
         }`}
       >
         {!fromSelf(messageObj.id) && (

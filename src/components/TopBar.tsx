@@ -1,15 +1,12 @@
 import React from "react";
-import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
 import { Toast, Modal } from "../service/sweet-alert";
 import { useCurrentRoomStore } from "../store";
 import { BsPerson } from "react-icons/bs";
+import createRoom from "../functions/createRoom";
 
-interface Props {
-  createRoom: any;
-}
-
-const TopBar: React.FC<Props> = ({ createRoom }) => {
+const TopBar: React.FC = () => {
   const user = auth.currentUser;
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
 
@@ -37,6 +34,10 @@ const TopBar: React.FC<Props> = ({ createRoom }) => {
           // add userid to room doc and setRooms
           await updateDoc(roomRef, {
             joined_users: arrayUnion(user?.uid),
+          });
+          const notiRef = doc(roomRef, `notifications/${user?.uid}`);
+          await setDoc(notiRef, {
+            hasNewMsg: false,
           });
           // addRoomData(roomSnapshot.data());
         }

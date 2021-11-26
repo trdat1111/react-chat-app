@@ -1,5 +1,4 @@
 # Todo:
-
 - [x] Display alert when user rejoin rooms where that users has join, 
 alert for "room not exist" for Join room btn,
 confirmation when user log out

@@ -11,6 +11,8 @@ import { MessageObj } from "../type";
 import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
 import { RiAttachment2, RiImage2Line } from "react-icons/ri";
 import { Tooltip } from "@chakra-ui/react";
+import { Toast } from "../service/sweet-alert";
+import updateNotiCollection from "../functions/updateNotiCollection";
 
 interface Props {}
 
@@ -56,7 +58,16 @@ const MessageInput: React.FC<Props> = () => {
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    updateNotiCollection(currentRoom!.roomId);
     if (user && e.target.files && currentRoom) {
+      if (e.target.files[0].size > 2097152) {
+        Toast.fire({
+          icon: "error",
+          title: "File size is too big! Limit is 2MB",
+        });
+        e.target.value = "";
+        return;
+      }
       // add file to storage
       const file = e.target.files[0];
       const fileName = file.name + Timestamp.now();
@@ -92,7 +103,7 @@ const MessageInput: React.FC<Props> = () => {
           });
         }
       );
-    } else return null;
+    } else return;
   }
 
   return (
@@ -145,6 +156,7 @@ const MessageInput: React.FC<Props> = () => {
             onKeyPress={(e) => {
               if (e.key === "Enter") e.preventDefault();
             }}
+            onClick={() => updateNotiCollection(currentRoom!.roomId)}
           />
         </div>
         <button type="submit" className="absolute right-3 bottom-3 m-2">
