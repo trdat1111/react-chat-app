@@ -33,7 +33,11 @@ const TopBar: React.FC = () => {
         } else {
           // add userid to room doc and setRooms
           await updateDoc(roomRef, {
-            joined_users: arrayUnion(user?.uid),
+            joined_users: arrayUnion({
+              userId: user?.uid,
+              userName: user?.displayName,
+              userAvt: user?.photoURL,
+            }),
           });
           const notiRef = doc(roomRef, `notifications/${user?.uid}`);
           await setDoc(notiRef, {
@@ -81,12 +85,14 @@ const TopBar: React.FC = () => {
         )}
       </h3>
       <div>
-        <button
-          className="button bg-blue-500 hover:bg-blue-600 mx-1"
-          onClick={shareRoom}
-        >
-          Share room ID
-        </button>
+        {currentRoom && (
+          <button
+            className="button bg-blue-500 hover:bg-blue-600 mx-1"
+            onClick={shareRoom}
+          >
+            Share room ID
+          </button>
+        )}
         <button
           className="button bg-purple-500 hover:bg-purple-600 mx-1"
           onClick={joinRoom}

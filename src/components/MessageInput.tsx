@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { Timestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db, storage } from "../service/firebase";
@@ -13,15 +13,16 @@ import { RiAttachment2, RiImage2Line } from "react-icons/ri";
 import { Tooltip } from "@chakra-ui/react";
 import { Toast } from "../service/sweet-alert";
 import updateNotiCollection from "../functions/updateNotiCollection";
+import { SocketContext } from "../service/socket";
 
 const MessageInput: React.FC = () => {
-  // const socket = useContext(SocketContext);
+  const socket = useContext(SocketContext);
   const user = auth.currentUser;
   const { formValue, setFormValue } = useFormValueStore();
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
   const addMsgToList = useMsgListStore((state) => state.addMsgToList);
 
-  async function addMsgToFireStore(
+  async function addDataToFirestore(
     room: typeof currentRoom,
     messageObj: MessageObj
   ) {
@@ -50,7 +51,7 @@ const MessageInput: React.FC = () => {
       };
       // socket.emit("emit-message", socket.id, formValue, roomValue);
       addMsgToList(message);
-      addMsgToFireStore(currentRoom, message);
+      addDataToFirestore(currentRoom, message);
       setFormValue("");
     }
   }
@@ -58,10 +59,10 @@ const MessageInput: React.FC = () => {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     updateNotiCollection(currentRoom!.roomId);
     if (user && e.target.files && currentRoom) {
-      if (e.target.files[0].size > 2097152) {
+      if (e.target.files[0].size > 26214400) {
         Toast.fire({
           icon: "error",
-          title: "File size is too big! Limit is 2MB",
+          title: "File size is too big! Limit is 25MB",
         });
         e.target.value = "";
         return;
@@ -85,7 +86,6 @@ const MessageInput: React.FC = () => {
         () => {
           // when success, add file url to firestore
           const type = file.name.split(".").at(-1);
-
           getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
             const message = {
               id: user.uid,
@@ -95,9 +95,11 @@ const MessageInput: React.FC = () => {
               photoURL: user.photoURL!,
               type: type!,
               fileName: file.name,
+              fileSize: file.size,
             };
             addMsgToList(message);
-            addMsgToFireStore(currentRoom, message);
+            addDataToFirestore(currentRoom, message);
+            e.target.value = "";
           });
         }
       );
@@ -157,7 +159,7 @@ const MessageInput: React.FC = () => {
             onClick={() => updateNotiCollection(currentRoom!.roomId)}
           />
         </div>
-        <button type="submit" className="absolute right-3 bottom-3 m-2">
+        <button type="submit" className="mt-12 m-2">
           <AiOutlineSend
             size="30"
             className="text-gray-600 hover:text-green-500 transition duration-300 ease-in-out cursor-pointer"

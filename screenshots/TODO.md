@@ -5,11 +5,14 @@ confirmation when user log out
 - [x] Sidebar UI for rooms
 - [x] Implement Zustand for state management
 - [x] Refactor Props
-- [ ] Retype Typescript
-- [ ] Re-implement socket.io for online and offline status, join room status, disconnect, ...
-- [ ] Refactor code
-- [ ] Add responsive to UI
+- [x] Retype Typescript
+- [x] Files in right nav
+- [x] Update right nav when change currentRoom
+- [ ] Understand code flow
 - [ ] Fix scrollToBottom
+- [ ] Add responsive to UI
+- [ ] Refactor code
+- [ ] Online and offline status
 
 ## Further features:
 - [ ] Leave rooms

@@ -8,6 +8,8 @@ import { useRoomDataStore } from "../store";
 import { Tooltip } from "@chakra-ui/react";
 import createRoom from "../functions/createRoom";
 import RoomList from "./RoomList";
+import SimpleBar from "simplebar-react";
+import "simplebar/dist/simplebar.min.css";
 
 const SideBar: React.FC = () => {
   const user = auth.currentUser;
@@ -30,28 +32,28 @@ const SideBar: React.FC = () => {
     );
   }
 
-  const listOfRoom =
-    roomData &&
-    roomData.map((room: RoomDataObj) => <RoomList room={room} key={room.id} />);
+  const listOfRoom = roomData
+    ? roomData.map((room: RoomDataObj) => (
+        <RoomList room={room} key={room.id} />
+      ))
+    : null;
 
   return (
-    <div className="flex flex-col justify-between bg-white max-h-screen border-r-2 max-w-md w-4/12">
-      <div className="overflow-y-auto">
-        <div className="flex flex-row items-center justify-between p-2">
-          <p className="text-lg font-bold uppercase">Room</p>
-          <div className="flex flex-row">
-            <Tooltip label="Create a room">
-              <div
-                onClick={createRoom}
-                className="flex w-9 h-9 rounded-full group-hover:rounded-xl transition-all duration-200 bg-gray-200 m-2 justify-center items-center hover:bg-gray-300 cursor-pointer"
-              >
-                <AiOutlineUsergroupAdd className="w-7 h-7" />
-              </div>
-            </Tooltip>
-          </div>
+    <div className="flex flex-col justify-between bg-white max-h-screen border-r-2 min-w-max">
+      <div className="flex flex-row items-center justify-between border-b-2 px-2 h-16">
+        <p className="text-xl font-bold">Room List</p>
+        <div className="flex flex-row">
+          <Tooltip label="Create a room">
+            <div
+              onClick={createRoom}
+              className="flex w-9 h-9 rounded-full group-hover:rounded-xl transition-all duration-200 bg-gray-200 m-2 justify-center items-center hover:bg-gray-300 cursor-pointer"
+            >
+              <AiOutlineUsergroupAdd className="w-7 h-7" />
+            </div>
+          </Tooltip>
         </div>
-        {listOfRoom}
       </div>
+      <SimpleBar className="overflow-y-auto h-5/6">{listOfRoom}</SimpleBar>
       <div className="flex flex-row items-center bg-gray-200 p-2">
         <img
           src={user?.photoURL?.toString()}

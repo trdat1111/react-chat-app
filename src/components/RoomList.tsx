@@ -60,6 +60,7 @@ const RoomList: React.FC<{ room: RoomDataObj }> = ({ room }) => {
       roomId: room.id,
       roomName: room.room_name,
       totalMember: room.joined_users.length,
+      members: room.joined_users,
     });
     updateNotiCollection(room.id);
   }
@@ -69,7 +70,7 @@ const RoomList: React.FC<{ room: RoomDataObj }> = ({ room }) => {
       className={`flex flex-row items-center group
       hover:bg-gray-100 transition-all ease-in-out h-19 mb-1 p-2 cursor-pointer ${
         currentRoom?.roomId === room.id
-          ? "bg-blue-100 border-r-4 border-blue-400"
+          ? "bg-blue-100 border-l-4 border-blue-600"
           : "bg-white"
       }`}
       onClick={handleRoomOnClick}

@@ -25,7 +25,11 @@ export default async function createRoom() {
     const roomSnapshot = await getDoc(roomRef);
     if (roomSnapshot.exists()) {
       await updateDoc(roomRef, {
-        joined_users: arrayUnion(user?.uid),
+        joined_users: arrayUnion({
+          userId: user?.uid,
+          userName: user?.displayName,
+          userAvt: user?.photoURL,
+        }),
       });
 
       const notiRef = doc(roomRef, `notifications/${user?.uid}`);

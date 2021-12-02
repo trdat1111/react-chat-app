@@ -3,29 +3,32 @@ import { SocketContext } from "../service/socket";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import "animate.css";
-import { Toast } from "../service/sweet-alert";
 import zustand from "../assets/zustand.png";
-import { useCurrentRoomStore, useMsgListStore, useNotiStore } from "../store";
+import { useCurrentRoomStore, useMsgListStore } from "../store";
 import { v4 as uuidv4 } from "uuid";
 import MessageList from "./MessageList";
 
 const MessageContainer: React.FC = () => {
   const socket = useContext(SocketContext);
-  const { notiList, setNoti } = useNotiStore();
   const msgList = useMsgListStore((state) => state.msgList);
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
   const dummy: any = useRef();
 
   const scrollToBottom = () => {
-    dummy.current.scrollIntoView({
-      behavior: "smooth",
-    });
+    dummy.current.scrollIntoView();
   };
 
-  useEffect(() => {
-    socket.on("show-user-joined", (msg: string) => showNoti(msg));
-    socket.on("show-disconnect", (msg: string) => showNoti(msg));
+  // function showNoti(msg: string) {
+  //   setNoti(msg);
+  //   Toast.fire({
+  //     title: <p>{msg}</p>,
+  //     icon: "info",
+  //   });
+  // }
 
+  useEffect(() => {
+    // socket.on("show-user-joined", (msg: string) => showNoti(msg));
+    // socket.on("show-disconnect", (msg: string) => showNoti(msg));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -33,23 +36,8 @@ const MessageContainer: React.FC = () => {
     scrollToBottom();
   }, [currentRoom, msgList]);
 
-  function showNoti(msg: string) {
-    setNoti(msg);
-    Toast.fire({
-      title: <p>{msg}</p>,
-      icon: "info",
-    });
-  }
-
-  const NotiList = notiList.map((noti, index) => (
-    <div key={index} className="text-green-600">
-      {noti}
-    </div>
-  ));
-
   return (
     <SimpleBar className="overflow-y-auto h-4/5 border-t-2 border-b-2 overflow-x-hidden bg-gray-100 p-2">
-      <div className="mb-3">{NotiList}</div>
       {msgList?.map((messageObj) => (
         <MessageList key={uuidv4()} messageObj={messageObj} />
       ))}

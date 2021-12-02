@@ -2,19 +2,33 @@ import { DocumentData, Timestamp } from "@firebase/firestore";
 
 export type RoomDataObj =
   | {
-      id: string;
+      id: string; // document id
       joined_users: string[];
       room_name: string;
-      messages: [];
+      messages: MessageObj[];
+      dateModified: Timestamp;
     }
   | DocumentData;
 
 export interface MessageObj {
-  id: string;
-  user: string;
+  id: string; // author's id
+  user: string; // author's username
   userData: string;
   created_at: Timestamp;
-  photoURL: string;
-  type: string;
+  photoURL: string; // photoURL of author
+  type: string; // data type: text or file extension
   fileName?: string;
+  fileSize?: number;
+}
+
+export interface Members {
+  userId: string;
+  userName: string;
+  userAvt: string;
+}
+
+export interface FileObj {
+  fileName: string;
+  fileUrl: string;
+  fileSize: number;
 }

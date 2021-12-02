@@ -5,7 +5,7 @@ const MessagePill: React.FC<{
   messageObj: MessageObj;
   fromSelf: (authorId: string) => boolean;
 }> = ({ messageObj, fromSelf }) => {
-  const imageTypes = /(gif|jpe?g|tiff?|png|webp|bmp)$/i;
+  const imageTypes = /(gif|jpe?g|tiff?|png|webp)$/i;
   // const otherTypes = [/pptx/, /doc/, /docx/];
 
   if (imageTypes.test(messageObj.type)) {

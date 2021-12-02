@@ -1,5 +1,5 @@
 import create from "zustand";
-import { RoomDataObj } from "./type";
+import { FileObj, Members, RoomDataObj } from "./type";
 import { MessageObj } from "./type";
 import { devtools } from "zustand/middleware";
 import produce from "immer";
@@ -78,28 +78,13 @@ export const useMsgListStore = create<msgListState>(
   )
 );
 
-// notiList
-interface notiState {
-  notiList: string[];
-  setNoti: (singleNoti: string) => void;
-}
-
-export const useNotiStore = create<notiState>(
-  devtools(
-    (set, get): notiState => ({
-      notiList: [],
-      setNoti: (singleNoti) =>
-        set((state) =>
-          state.notiList
-            ? { notiList: [...get().notiList, singleNoti] }
-            : { notiList: [singleNoti] }
-        ),
-    })
-  )
-);
-
 // currentRoom
-type currentRoom = { roomId: string; roomName: string; totalMember: number };
+type currentRoom = {
+  roomId: string;
+  roomName: string;
+  totalMember: number;
+  members: [];
+};
 
 interface currentRoomState {
   currentRoom: currentRoom | null;
@@ -111,6 +96,72 @@ export const useCurrentRoomStore = create<currentRoomState>(
     (set): currentRoomState => ({
       currentRoom: null,
       setCurrentRoom: (roomObj) => set({ currentRoom: roomObj }),
+    })
+  )
+);
+
+// members
+interface memberState {
+  members: Members[];
+  setMembers: (members: Members[]) => void;
+  addMember: (member: Members) => void;
+}
+
+export const useMemberStore = create<memberState>(
+  devtools(
+    (set, get): memberState => ({
+      members: [],
+      setMembers: (members) => set({ members: members }),
+      addMember: (member) =>
+        set((state) =>
+          state.members
+            ? { members: [...get().members, member] }
+            : { members: [member] }
+        ),
+    })
+  )
+);
+
+// image list
+interface imageListState {
+  imageList: string[];
+  setImageList: (imageArr: string[]) => void;
+  addImage: (image: string) => void;
+}
+
+export const useImageListStore = create<imageListState>(
+  devtools(
+    (set, get): imageListState => ({
+      imageList: [],
+      setImageList: (imageArr) => set({ imageList: imageArr }),
+      addImage: (image) =>
+        set((state) =>
+          state.imageList
+            ? { imageList: [...get().imageList, image] }
+            : { imageList: [image] }
+        ),
+    })
+  )
+);
+
+// file list
+interface FileListState {
+  fileList: FileObj[];
+  setFileList: (fileList: FileObj[]) => void;
+  addFile: (file: FileObj) => void;
+}
+
+export const useFileListStore = create<FileListState>(
+  devtools(
+    (set, get): FileListState => ({
+      fileList: [],
+      setFileList: (fileList) => set({ fileList: fileList }),
+      addFile: (file) =>
+        set((state) =>
+          state.fileList
+            ? { fileList: [...get().fileList, file] }
+            : { fileList: [file] }
+        ),
     })
   )
 );

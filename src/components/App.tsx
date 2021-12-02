@@ -12,30 +12,43 @@ import {
 import { auth, db } from "../service/firebase";
 import {
   useCurrentRoomStore,
+  useFileListStore,
+  useImageListStore,
+  useMemberStore,
   useMsgListStore,
   useRoomDataStore,
 } from "../store";
-import { RoomDataObj } from "../type";
+import { FileObj, MessageObj, RoomDataObj } from "../type";
 
 // components
 import TopBar from "./TopBar";
 import MessageContainer from "./MessageContainer";
 import MessageInput from "./MessageInput";
 import SideBar from "./SideBar";
+import RightNav from "./RightNav";
+import formatBytes from "../functions/formatBytes";
 
 const App: React.FC = () => {
   // const socket = useContext(SocketContext);
   const user = auth.currentUser;
   const { roomData, addRoomData, updateMsgInRoom, removeRoom } =
     useRoomDataStore();
-  const { msgList, setMsgList } = useMsgListStore();
+  const { setMsgList } = useMsgListStore();
   const { currentRoom, setCurrentRoom } = useCurrentRoomStore();
+  const setMembers = useMemberStore((state) => state.setMembers);
+  const setImageList = useImageListStore((state) => state.setImageList);
+  const setFileList = useFileListStore((state) => state.setFileList);
+  const imageTypes = /(gif|jpe?g|tiff?|png|webp)$/i;
 
   useEffect(() => {
     // fetch room based on joined users and all messages in each room
     const roomQuery = query(
       collection(db, "group_messages"),
-      where("joined_users", "array-contains", user?.uid)
+      where("joined_users", "array-contains", {
+        userId: user?.uid,
+        userName: user?.displayName,
+        userAvt: user?.photoURL,
+      })
     );
 
     const unsubcribe = onSnapshot(roomQuery, (roomSnapshot) => {
@@ -51,21 +64,22 @@ const App: React.FC = () => {
           // update room when new message comes
           updateMsgInRoom(change.doc.id, change.doc.data().messages);
 
-          // set hasNewMsg to true for the rest of users in this room
-          (async () => {
-            const q = query(
-              // query for all users doc in notifications subcollection except current user
-              collection(change.doc.ref, "notifications"),
-              where(documentId(), "!=", change.doc.data().messages?.at(-1).id) // user who sent last msg
-            );
-
-            const snapshot = await getDocs(q);
-            snapshot.forEach(async (doc) => {
-              await updateDoc(doc.ref, {
-                hasNewMsg: true,
+          // if users send msg, set hasNewMsg to true for the rest of users in this room
+          if (change.doc.data().messages) {
+            (async () => {
+              const q = query(
+                // query for all users doc in notifications subcollection except current user
+                collection(change.doc.ref, "notifications"),
+                where(documentId(), "!=", change.doc.data().messages?.at(-1).id) // user id who sent last msg
+              );
+              const snapshot = await getDocs(q);
+              snapshot.forEach(async (doc) => {
+                await updateDoc(doc.ref, {
+                  hasNewMsg: true,
+                });
               });
-            });
-          })();
+            })();
+          }
         }
         if (change.type === "removed") {
           // Removed room
@@ -91,11 +105,32 @@ const App: React.FC = () => {
       });
       if (currRoom) {
         setMsgList(currRoom.messages);
-        // setnewMsgNoti(false);
+        setMembers(currRoom.joined_users);
+        if (currRoom.messages) {
+          // update all sent images to imageList
+          const imageMsg = currRoom.messages.filter((msg: MessageObj) =>
+            imageTypes.test(msg.type)
+          );
+          setImageList(imageMsg.map((msg: MessageObj) => msg.userData));
+
+          // update all sent files to fileList
+          const fileMsg = currRoom.messages.filter(
+            (msg: MessageObj) =>
+              !imageTypes.test(msg.type) && msg.type !== "text"
+          );
+          const fileArray: FileObj[] = fileMsg.map((msg: MessageObj) => {
+            return {
+              fileName: msg.fileName,
+              fileUrl: msg.userData,
+              fileSize: formatBytes(msg.fileSize!),
+            };
+          });
+          setFileList(fileArray);
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRoom, roomData, msgList]);
+  }, [currentRoom, roomData]);
 
   return (
     <>
@@ -105,6 +140,7 @@ const App: React.FC = () => {
         <MessageContainer />
         {currentRoom && <MessageInput />}
       </div>
+      {currentRoom && <RightNav />}
     </>
   );
 };
