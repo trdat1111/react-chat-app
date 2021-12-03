@@ -1,3 +1,4 @@
+import React from "react";
 import isValidUrl from "../functions/isValidUrl";
 import { MessageObj } from "../type";
 

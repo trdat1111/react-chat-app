@@ -33,7 +33,10 @@ const MessageContainer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    setTimeout(() => {
+      // setTimeout to wait for img preload
+      scrollToBottom();
+    }, 350);
   }, [currentRoom, msgList]);
 
   return (

@@ -8,8 +8,8 @@ confirmation when user log out
 - [x] Retype Typescript
 - [x] Files in right nav
 - [x] Update right nav when change currentRoom
+- [x] Fix scrollToBottom
 - [ ] Understand code flow
-- [ ] Fix scrollToBottom
 - [ ] Add responsive to UI
 - [ ] Refactor code
 - [ ] Online and offline status

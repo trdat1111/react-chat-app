@@ -1,15 +1,16 @@
 import React, { useContext } from "react";
 import { RoomDataObj } from "../type";
 import { auth } from "../service/firebase";
-import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { signOut } from "firebase/auth";
 import { SocketContext } from "../service/socket";
 import { useRoomDataStore } from "../store";
 import { Tooltip } from "@chakra-ui/react";
 import createRoom from "../functions/createRoom";
+import joinRoom from "../functions/joinRoom";
 import RoomList from "./RoomList";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
+import { MdGroup, MdGroupAdd, MdLogout } from "react-icons/md";
 
 const SideBar: React.FC = () => {
   const user = auth.currentUser;
@@ -23,12 +24,14 @@ const SideBar: React.FC = () => {
     }
 
     return (
-      <button
-        className="button bg-red-400 hover:bg-red-500"
-        onClick={handleSignOut}
-      >
-        Sign out
-      </button>
+      <Tooltip label="Sign out">
+        <button
+          className="button ml-auto bg-red-400 hover:bg-red-500"
+          onClick={handleSignOut}
+        >
+          <MdLogout className="w-6 h-6" />
+        </button>
+      </Tooltip>
     );
   }
 
@@ -39,16 +42,24 @@ const SideBar: React.FC = () => {
     : null;
 
   return (
-    <div className="flex flex-col justify-between bg-white max-h-screen border-r-2 min-w-max">
+    <div className="flex flex-col justify-between bg-white max-h-screen w-5/12 max-w-xs border-r-2 min-w-max">
       <div className="flex flex-row items-center justify-between border-b-2 px-2 h-16">
         <p className="text-xl font-bold">Room List</p>
         <div className="flex flex-row">
           <Tooltip label="Create a room">
             <div
               onClick={createRoom}
-              className="flex w-9 h-9 rounded-full group-hover:rounded-xl transition-all duration-200 bg-gray-200 m-2 justify-center items-center hover:bg-gray-300 cursor-pointer"
+              className="flex w-9 h-9 rounded-full group-hover:rounded-xl transition-all duration-200 bg-gray-200 mr-2 justify-center items-center hover:bg-gray-300 cursor-pointer"
             >
-              <AiOutlineUsergroupAdd className="w-7 h-7" />
+              <MdGroup className="w-5 h-5" />
+            </div>
+          </Tooltip>
+          <Tooltip label="Join a room">
+            <div
+              onClick={joinRoom}
+              className="flex w-9 h-9 rounded-full group-hover:rounded-xl transition-all duration-200 bg-gray-200 mr-2 justify-center items-center hover:bg-gray-300 cursor-pointer"
+            >
+              <MdGroupAdd className="w-5 h-5" />
             </div>
           </Tooltip>
         </div>
@@ -58,7 +69,7 @@ const SideBar: React.FC = () => {
         <img
           src={user?.photoURL?.toString()}
           className="w-12 h-12 rounded-full mr-1"
-          alt="CurrentUserAvt"
+          alt=""
         />
         <div className="flex flex-col w-48">
           <p className="font-bold text-sm truncate">{user?.displayName}</p>

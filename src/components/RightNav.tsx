@@ -9,6 +9,10 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import { BsBoxArrowLeft, BsFileEarmarkZip } from "react-icons/bs";
+import { MdGroup } from "react-icons/md";
+import { HiDownload } from "react-icons/hi";
+import { IoMdImages } from "react-icons/io";
+import { BiFile } from "react-icons/bi";
 import { v4 as uuidv4 } from "uuid";
 import { Members, FileObj } from "../type";
 
@@ -31,13 +35,23 @@ const RightNav = () => {
           alt=""
           className="w-12 h-12 rounded-2xl m-2"
         />
-        <p>{currentRoom!.roomName}</p>
+        <p className="font-bold">{currentRoom!.roomName}</p>
+        <p className="text-sm">ID: {currentRoom!.roomId}</p>
       </div>
       <Tabs variant="enclosed" isFitted className="h-1/2">
         <TabList>
-          <Tab>Members</Tab>
-          <Tab>Images</Tab>
-          <Tab>Files</Tab>
+          <Tab>
+            <MdGroup />
+            <p className="text-sm ml-1">Members</p>
+          </Tab>
+          <Tab>
+            <IoMdImages />
+            <p className="text-sm ml-1">Images</p>
+          </Tab>
+          <Tab>
+            <BiFile />
+            <p className="text-sm ml-1">Files</p>
+          </Tab>
         </TabList>
         <TabPanels>
           <TabPanel>{members && <MembersTab members={members} />}</TabPanel>
@@ -113,16 +127,16 @@ const FilesTab: React.FC<{ fileList: FileObj[] }> = ({ fileList }) => {
         forceVisible="y"
       >
         {fileList.map((file: FileObj) => (
-          <div className="flex flex-row items-center mb-2" key={uuidv4()}>
-            <a
-              href={file.fileUrl}
-              className="flex flex-row w-80 hover:bg-gray-200 items-center"
-            >
-              <BsFileEarmarkZip className="w-8 h-8 ml-3 text-blue-̃600" />
-              <div className="flex flex-col p-3">
-                <div className="text-sm font-semibold">{file.fileName}</div>
-                <div className="text-sm">{file.fileSize}</div>
+          <div className="flex flex-row items-center h-16" key={uuidv4()}>
+            <BsFileEarmarkZip className="w-8 h-8 ml-3 text-blue-̃600" />
+            <div className="flex flex-col p-3 w-56">
+              <div className="text-sm font-semibold truncate">
+                {file.fileName}
               </div>
+              <div className="text-sm">{file.fileSize}</div>
+            </div>
+            <a href={file.fileUrl}>
+              <HiDownload className="w-6 h-6 border-2 rounded hover:bg-gray-100" />
             </a>
           </div>
         ))}

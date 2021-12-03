@@ -108,17 +108,17 @@ const App: React.FC = () => {
         setMembers(currRoom.joined_users);
         if (currRoom.messages) {
           // update all sent images to imageList
-          const imageMsg = currRoom.messages.filter((msg: MessageObj) =>
+          const imageMsg = currRoom.messages?.filter((msg: MessageObj) =>
             imageTypes.test(msg.type)
           );
-          setImageList(imageMsg.map((msg: MessageObj) => msg.userData));
+          setImageList(imageMsg?.map((msg: MessageObj) => msg.userData));
 
           // update all sent files to fileList
-          const fileMsg = currRoom.messages.filter(
+          const fileMsg = currRoom.messages?.filter(
             (msg: MessageObj) =>
               !imageTypes.test(msg.type) && msg.type !== "text"
           );
-          const fileArray: FileObj[] = fileMsg.map((msg: MessageObj) => {
+          const fileArray: FileObj[] = fileMsg?.map((msg: MessageObj) => {
             return {
               fileName: msg.fileName,
               fileUrl: msg.userData,
@@ -126,6 +126,10 @@ const App: React.FC = () => {
             };
           });
           setFileList(fileArray);
+        } else {
+          // if room dont have msg
+          setImageList([]);
+          setFileList([]);
         }
       }
     }
