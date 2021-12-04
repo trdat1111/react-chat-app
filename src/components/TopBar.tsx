@@ -1,8 +1,8 @@
 import React from "react";
 import { Toast } from "../service/sweet-alert";
 import { useCurrentRoomStore } from "../store";
-import { BsPerson } from "react-icons/bs";
 import { FiShare2 } from "react-icons/fi";
+import { HiUserGroup } from "react-icons/hi";
 
 const TopBar: React.FC = () => {
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
@@ -29,7 +29,7 @@ const TopBar: React.FC = () => {
               <li>{currentRoom?.roomName}</li>
             </ul>
             <div className="flex flex-row items-center text-base font-normal">
-              <BsPerson className="mr-1" />
+              <HiUserGroup className="mr-1" />
               <p>{currentRoom?.totalMember} members</p>
             </div>
           </>

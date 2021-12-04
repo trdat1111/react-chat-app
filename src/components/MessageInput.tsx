@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { Timestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db, storage } from "../service/firebase";
@@ -13,10 +13,9 @@ import { RiAttachment2, RiImage2Line } from "react-icons/ri";
 import { Tooltip } from "@chakra-ui/react";
 import { Toast } from "../service/sweet-alert";
 import updateNotiCollection from "../functions/updateNotiCollection";
-import { SocketContext } from "../service/socket";
 
 const MessageInput: React.FC = () => {
-  const socket = useContext(SocketContext);
+  // const socket = useContext(SocketContext);
   const user = auth.currentUser;
   const { formValue, setFormValue } = useFormValueStore();
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);

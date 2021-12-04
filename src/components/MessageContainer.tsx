@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { SocketContext } from "../service/socket";
+import React, { useEffect, useRef } from "react";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import "animate.css";
@@ -9,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import MessageList from "./MessageList";
 
 const MessageContainer: React.FC = () => {
-  const socket = useContext(SocketContext);
+  // const socket = useContext(SocketContext);
   const msgList = useMsgListStore((state) => state.msgList);
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
   const dummy: any = useRef();
@@ -36,7 +35,7 @@ const MessageContainer: React.FC = () => {
     setTimeout(() => {
       // setTimeout to wait for img preload
       scrollToBottom();
-    }, 350);
+    }, 400);
   }, [currentRoom, msgList]);
 
   return (

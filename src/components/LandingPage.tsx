@@ -24,7 +24,7 @@ function LandingPage(): JSX.Element {
     );
   }
   if (user) {
-    socket.connect();
+    // socket.connect();
     return (
       <div className="flex flex-row h-screen font-roboto">
         <SocketContext.Provider value={socket}>

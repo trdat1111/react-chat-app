@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { RoomDataObj } from "../type";
 import { auth } from "../service/firebase";
 import { signOut } from "firebase/auth";
-import { SocketContext } from "../service/socket";
 import { useRoomDataStore } from "../store";
 import { Tooltip } from "@chakra-ui/react";
 import createRoom from "../functions/createRoom";
@@ -14,13 +13,13 @@ import { MdGroup, MdGroupAdd, MdLogout } from "react-icons/md";
 
 const SideBar: React.FC = () => {
   const user = auth.currentUser;
-  const socket = useContext(SocketContext);
+  // const socket = useContext(SocketContext);
   const roomData = useRoomDataStore((state) => state.roomData);
 
   function SignOut(): JSX.Element {
     function handleSignOut() {
       signOut(auth);
-      socket.disconnect();
+      // socket.disconnect();
     }
 
     return (
