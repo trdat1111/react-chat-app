@@ -35,11 +35,12 @@ const SideBar: React.FC = () => {
     );
   }
 
-  const listOfRoom = roomData
-    ? roomData.map((room: RoomDataObj) => (
-        <RoomList room={room} key={room.id} />
-      ))
-    : null;
+  const listOfRoom =
+    roomData && roomData.length > 0
+      ? roomData.map((room: RoomDataObj) => (
+          <RoomList room={room} key={room.id} />
+        ))
+      : null;
 
   return (
     <div className="flex flex-col justify-between bg-white h-screen w-4/12 max-w-xs border-r-2 min-w-max">

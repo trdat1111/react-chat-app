@@ -27,7 +27,7 @@ const RoomList: React.FC<{ room: RoomDataObj }> = ({ room }) => {
   }, []);
 
   function displayLastMsg(room: RoomDataObj) {
-    if (room.messages) {
+    if (room.messages.length > 0) {
       const lastMsg: MessageObj = room.messages?.at(-1);
       let showLastMsg = "";
       const lastMsgUser =

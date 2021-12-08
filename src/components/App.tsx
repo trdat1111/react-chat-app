@@ -56,11 +56,9 @@ const App: React.FC = () => {
     const unsubcribe = onSnapshot(roomQuery, (roomSnapshot) => {
       roomSnapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
-          if (roomData?.length === 0) {
-            // add room on mounted
-            const roomDataObj = { ...change.doc.data(), id: change.doc.id };
-            addRoomData(roomDataObj);
-          }
+          // add room on mounted
+          const roomDataObj = { ...change.doc.data(), id: change.doc.id };
+          addRoomData(roomDataObj);
         }
         if (change.type === "modified") {
           // update room when new message comes
