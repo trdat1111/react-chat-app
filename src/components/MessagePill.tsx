@@ -19,15 +19,16 @@ const MessagePill: React.FC<{
         <img
           src={messageObj.userData}
           alt="users resource"
-          className="object-cover max-h-48 rounded-xl max-w-md"
+          className="object-cover max-h-36 md:max-h-44 lg:max-h-48 rounded-xl"
         />
+        {/* <PreloadImage src={messageObj.userData} /> */}
       </div>
     );
   } else if (isValidUrl(messageObj.userData)) {
     // if userData is a file
     return (
       <div
-        className={`inline-block max-w-xl shadow rounded-2xl my-1 p-3 ${
+        className={`inline-block max-w-xs md:max-w-sm lg:max-w-md shadow rounded-2xl my-1 p-3 ${
           fromSelf(messageObj.id) ? "bg-blue-400 text-white" : "bg-white"
         }`}
       >
@@ -45,7 +46,7 @@ const MessagePill: React.FC<{
   }
   return (
     <div
-      className={`inline-block max-w-xl shadow rounded-2xl my-1 p-3 ${
+      className={`inline-block max-w-xs md:max-w-sm lg:max-w-md shadow rounded-2xl my-1 p-3 ${
         fromSelf(messageObj.id) ? "bg-blue-400 text-white" : "bg-white"
       }`}
     >

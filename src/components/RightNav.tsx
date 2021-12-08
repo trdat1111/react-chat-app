@@ -8,35 +8,69 @@ import {
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
-import { BsBoxArrowLeft, BsFileEarmarkZip } from "react-icons/bs";
+import { BsBoxArrowLeft, BsFileEarmarkZip, BsInfoCircle } from "react-icons/bs";
 import { MdGroup } from "react-icons/md";
 import { HiDownload } from "react-icons/hi";
 import { IoMdImages } from "react-icons/io";
 import { BiFile } from "react-icons/bi";
 import { v4 as uuidv4 } from "uuid";
 import { Members, FileObj } from "../type";
+import { arrayRemove, doc, updateDoc } from "@firebase/firestore";
+import { auth, db } from "../service/firebase";
+import { Modal } from "../service/sweet-alert";
+import { AiTwotoneSetting } from "react-icons/ai";
+import image_icon from "../assets/image-icon.svg";
+import file_icon from "../assets/file-icon.svg";
 
 const RightNav = () => {
-  const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
+  const { currentRoom, setCurrentRoom } = useCurrentRoomStore();
   const members = useMemberStore((state) => state.members);
   const imageList = useImageListStore((state) => state.imageList);
   const fileList = useFileListStore((state) => state.fileList);
+  const user = auth.currentUser;
+
+  function leaveRoom() {
+    Modal.fire({
+      title: `Leave ${currentRoom?.roomName}?`,
+      icon: "question",
+      showConfirmButton: true,
+      confirmButtonText: "Leave",
+      confirmButtonColor: "#F87171",
+      showCancelButton: true,
+      timer: undefined,
+      width: "400",
+    }).then(async (result) => {
+      if (result.isDismissed) return;
+      else if (result.isConfirmed) {
+        const roomRef = doc(db, "group_messages", currentRoom!.roomId);
+        await updateDoc(roomRef, {
+          joined_users: arrayRemove({
+            userId: user?.uid,
+            userName: user?.displayName,
+            userAvt: user?.photoURL,
+          }),
+        });
+        setCurrentRoom(null);
+      }
+    });
+  }
 
   return (
-    <div className="w-5/12 border-l-2">
+    <div className="border-l-2">
       <div className="flex justify-center items-center border-b-2 p-4">
-        <p className="text-xl font-bold">Room info</p>
+        <BsInfoCircle className="w-5 h-5 mr-1" />
+        <p className="text-xl font-bold">Room Info</p>
       </div>
       <div className="flex flex-col justify-center items-center my-3">
         <img
           src={`https://avatars.dicebear.com/api/initials/${
-            currentRoom!.roomName + currentRoom!.roomId
+            currentRoom && currentRoom.roomName + currentRoom.roomId
           }.svg`}
           alt=""
           className="w-12 h-12 rounded-2xl m-2"
         />
-        <p className="font-bold">{currentRoom!.roomName}</p>
-        <p className="text-sm">ID: {currentRoom!.roomId}</p>
+        <p className="font-bold">{currentRoom?.roomName}</p>
+        <p className="text-sm">ID: {currentRoom?.roomId}</p>
       </div>
       <Tabs variant="enclosed" isFitted className="h-1/2">
         <TabList>
@@ -59,21 +93,37 @@ const RightNav = () => {
             {imageList.length !== 0 ? (
               <ImagesTab imageList={imageList} />
             ) : (
-              <div>No image</div>
+              <div className="flex flex-col justify-center items-center text-center w-full h-40">
+                <img src={image_icon} className="w-10 h-10 mb-1" alt="" />
+                <p className="text-sm w-60">
+                  No image have been shared in this conversation yet
+                </p>
+              </div>
             )}
           </TabPanel>
-          <TabPanel p={0}>
+          <TabPanel p={fileList.length ? `0` : `4`}>
             {fileList.length !== 0 ? (
               <FilesTab fileList={fileList} />
             ) : (
-              <div>No file</div>
+              <div className="flex flex-col justify-center items-center text-center w-full h-40">
+                <img src={file_icon} className="w-10 h-10 mb-1" alt="" />
+                <p className="text-sm w-60">
+                  No files have been shared in this conversation yet
+                </p>
+              </div>
             )}
           </TabPanel>
         </TabPanels>
       </Tabs>
       <div className="fixed bottom-2 w-80 border-t-2">
-        <p className="font-bold m-3">Options</p>
-        <div className="flex flex-row items-center w-full text-red-500 hover:bg-red-100 cursor-pointer p-2">
+        <p className="flex flex-row items-center font-bold m-3">
+          <AiTwotoneSetting className="w-5 h-5 mr-1" />
+          Options
+        </p>
+        <div
+          onClick={leaveRoom}
+          className="flex flex-row items-center w-full text-red-500 hover:bg-red-100 cursor-pointer p-2"
+        >
           <BsBoxArrowLeft className="w-7 h-7 mr-3" />
           Leave Room
         </div>

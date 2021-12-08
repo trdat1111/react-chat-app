@@ -1,6 +1,12 @@
 import React from "react";
 import { AiOutlineSend } from "react-icons/ai";
-import { Timestamp, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import {
+  Timestamp,
+  doc,
+  updateDoc,
+  arrayUnion,
+  serverTimestamp,
+} from "firebase/firestore";
 import { auth, db, storage } from "../service/firebase";
 import {
   useCurrentRoomStore,
@@ -28,6 +34,7 @@ const MessageInput: React.FC = () => {
     const roomRef = doc(db, `group_messages/${room?.roomId}`);
     await updateDoc(roomRef, {
       messages: arrayUnion(messageObj),
+      modified_at: serverTimestamp(),
     });
   }
 
@@ -159,10 +166,7 @@ const MessageInput: React.FC = () => {
           />
         </div>
         <button type="submit" className="mt-12 m-2">
-          <AiOutlineSend
-            size="30"
-            className="text-gray-600 hover:text-green-500 transition duration-300 ease-in-out cursor-pointer"
-          />
+          <AiOutlineSend className="w-7 h-7 text-gray-600 hover:text-green-500 transition duration-300 ease-in-out cursor-pointer" />
         </button>
       </form>
     </>

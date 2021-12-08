@@ -18,13 +18,11 @@ const MessageList: React.FC<{
         fromSelf(messageObj.id) ? "flex-row-reverse mr-3" : "flex-row ml-3"
       }`}
     >
-      {messageObj.photoURL && (
-        <img
-          src={messageObj.photoURL}
-          className="align-middle rounded-full w-9 h-9 m-1"
-          alt="author"
-        />
-      )}
+      <img
+        src={messageObj.photoURL}
+        className="align-middle rounded-full w-9 h-9 m-1"
+        alt="author"
+      />
       <div
         className={`flex items-center group ${
           fromSelf(messageObj.id) ? "flex-row" : "flex-row-reverse"

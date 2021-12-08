@@ -5,5 +5,5 @@
 @tailwind utilities;
 
 .button {
-  @apply rounded-lg text-white h-9 px-2 transition duration-300 ease-in-out cursor-pointer;
+  @apply flex flex-row items-center rounded-lg text-white h-9 px-2 transition duration-300 ease-in-out cursor-pointer;
 }

@@ -8,6 +8,7 @@ import {
   updateDoc,
   getDocs,
   documentId,
+  orderBy,
 } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
 import {
@@ -41,14 +42,15 @@ const App: React.FC = () => {
   const imageTypes = /(gif|jpe?g|tiff?|png|webp)$/i;
 
   useEffect(() => {
-    // fetch room based on joined users and all messages in each room
+    // fetch all room where current user is in it and all messages in each room
     const roomQuery = query(
       collection(db, "group_messages"),
       where("joined_users", "array-contains", {
         userId: user?.uid,
         userName: user?.displayName,
         userAvt: user?.photoURL,
-      })
+      }),
+      orderBy("modified_at", "desc")
     );
 
     const unsubcribe = onSnapshot(roomQuery, (roomSnapshot) => {
@@ -89,8 +91,8 @@ const App: React.FC = () => {
         }
       });
 
-      const source = roomSnapshot.metadata.fromCache ? "local cache" : "server";
-      console.log(`Room data came from ${source}`);
+      // const source = roomSnapshot.metadata.fromCache ? "local cache" : "server";
+      // console.log(`Room data came from ${source}`);
     });
 
     return () => unsubcribe();
@@ -104,9 +106,9 @@ const App: React.FC = () => {
         return roomObj.id === currentRoom.roomId;
       });
       if (currRoom) {
-        setMsgList(currRoom.messages);
         setMembers(currRoom.joined_users);
         if (currRoom.messages) {
+          setMsgList(currRoom.messages);
           // update all sent images to imageList
           const imageMsg = currRoom.messages?.filter((msg: MessageObj) =>
             imageTypes.test(msg.type)
@@ -138,13 +140,19 @@ const App: React.FC = () => {
 
   return (
     <>
-      <SideBar />
+      <div className="hidden lg:flex">
+        <SideBar />
+      </div>
       <div className="flex flex-col w-full h-full">
         <TopBar />
         <MessageContainer />
         {currentRoom && <MessageInput />}
       </div>
-      {currentRoom && <RightNav />}
+      {currentRoom && (
+        <div className="hidden lg:flex">
+          <RightNav />
+        </div>
+      )}
     </>
   );
 };

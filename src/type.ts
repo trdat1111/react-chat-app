@@ -6,7 +6,7 @@ export type RoomDataObj =
       joined_users: string[];
       room_name: string;
       messages: MessageObj[];
-      dateModified: Timestamp;
+      modified_at: Timestamp;
     }
   | DocumentData;
 

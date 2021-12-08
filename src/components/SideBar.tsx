@@ -10,6 +10,7 @@ import RoomList from "./RoomList";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import { MdGroup, MdGroupAdd, MdLogout } from "react-icons/md";
+import { BsListUl } from "react-icons/bs";
 
 const SideBar: React.FC = () => {
   const user = auth.currentUser;
@@ -41,9 +42,12 @@ const SideBar: React.FC = () => {
     : null;
 
   return (
-    <div className="flex flex-col justify-between bg-white max-h-screen w-5/12 max-w-xs border-r-2 min-w-max">
+    <div className="flex flex-col justify-between bg-white h-screen w-4/12 max-w-xs border-r-2 min-w-max">
       <div className="flex flex-row items-center justify-between border-b-2 px-2 h-16">
-        <p className="text-xl font-bold">Room List</p>
+        <div className="flex flex-row items-center">
+          <BsListUl className="w-5 h-5 mr-1" />
+          <p className="text-xl font-bold">Room List</p>
+        </div>
         <div className="flex flex-row">
           <Tooltip label="Create a room">
             <div
@@ -64,7 +68,7 @@ const SideBar: React.FC = () => {
         </div>
       </div>
       <SimpleBar className="overflow-y-auto h-5/6">{listOfRoom}</SimpleBar>
-      <div className="flex flex-row items-center bg-gray-200 p-2">
+      <div className="flex flex-row items-center bg-gray-200 mt-auto p-2">
         <img
           src={user?.photoURL?.toString()}
           className="w-12 h-12 rounded-full mr-1"

@@ -1,7 +1,7 @@
 import create from "zustand";
 import { FileObj, Members, RoomDataObj } from "./type";
 import { MessageObj } from "./type";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import produce from "immer";
 
 // formValue
@@ -93,10 +93,15 @@ interface currentRoomState {
 
 export const useCurrentRoomStore = create<currentRoomState>(
   devtools(
-    (set): currentRoomState => ({
-      currentRoom: null,
-      setCurrentRoom: (roomObj) => set({ currentRoom: roomObj }),
-    })
+    persist(
+      (set): currentRoomState => ({
+        currentRoom: null,
+        setCurrentRoom: (roomObj) => set({ currentRoom: roomObj }),
+      }),
+      {
+        name: "currentRoom-storage",
+      }
+    )
   )
 );
 

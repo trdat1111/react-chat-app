@@ -6,6 +6,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { auth, db } from "../service/firebase";
 import { Modal } from "../service/sweet-alert";
@@ -20,6 +21,8 @@ export default async function createRoom() {
   if (val && val !== "") {
     const roomRef = await addDoc(collection(db, "group_messages"), {
       room_name: val,
+      modified_at: serverTimestamp(),
+      messages: [],
     });
 
     const roomSnapshot = await getDoc(roomRef);

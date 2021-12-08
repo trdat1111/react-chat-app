@@ -3,6 +3,18 @@ import { Toast } from "../service/sweet-alert";
 import { useCurrentRoomStore } from "../store";
 import { FiShare2 } from "react-icons/fi";
 import { HiUserGroup } from "react-icons/hi";
+import {
+  Button,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { BsInfoCircle, BsListUl } from "react-icons/bs";
+
+// component
+import SideBar from "./SideBar";
+import RightNav from "./RightNav";
 
 const TopBar: React.FC = () => {
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
@@ -17,12 +29,44 @@ const TopBar: React.FC = () => {
     navigator.clipboard.writeText(currentRoom!.roomId);
   }
 
+  function SideBarDrawer() {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    return (
+      <div className="lg:hidden">
+        <Button onClick={onOpen}>
+          <BsListUl className="w-5 h-5" />
+        </Button>
+        <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <SideBar />
+          </DrawerContent>
+        </Drawer>
+      </div>
+    );
+  }
+
+  function RightNavDrawer() {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    return (
+      <div className="lg:hidden">
+        <Button onClick={onOpen}>
+          <BsInfoCircle className="w-5 h-5" />
+        </Button>
+        <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <RightNav />
+          </DrawerContent>
+        </Drawer>
+      </div>
+    );
+  }
+
   return (
     <div className="inline-flex flex-row items-center justify-between h-16 px-3">
-      <h3 className="text-xl font-bold pt-1">
-        {/* {socket.id && user
-          ? `Hello ${user.displayName}`
-          : `Server not response`} */}
+      <SideBarDrawer />
+      <h3 className="text-xl font-bold mr-auto mx-2 pt-1">
         {currentRoom && (
           <>
             <ul>
@@ -38,7 +82,7 @@ const TopBar: React.FC = () => {
       <div>
         {currentRoom && (
           <button
-            className="flex flex-row items-center button bg-blue-500 hover:bg-blue-600 mx-1"
+            className="button bg-blue-500 hover:bg-blue-600 mx-1"
             onClick={shareRoom}
           >
             <FiShare2 className="mr-1" />
@@ -46,6 +90,7 @@ const TopBar: React.FC = () => {
           </button>
         )}
       </div>
+      <RightNavDrawer />
     </div>
   );
 };

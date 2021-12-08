@@ -9,13 +9,14 @@ confirmation when user log out
 - [x] Files in right nav
 - [x] Update right nav when change currentRoom
 - [x] Fix scrollToBottom
+- [x] Add responsive to UI
+- [x] Refactor code
 - [ ] Understand code flow
-- [ ] Add responsive to UI
-- [ ] Refactor code
-- [ ] Online and offline status
+- [ ] Pagination ?
+- [ ] Online and offline status ?
 
 ## Further features:
-- [ ] Leave rooms
+- [x] Leave rooms
 - [ ] Delete messages
 - [ ] Delete rooms
 - [ ] Private messages

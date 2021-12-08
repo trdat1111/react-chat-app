@@ -1,7 +1,16 @@
 import { SocketContext, socket } from "../service/socket";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+  signInWithRedirect,
+} from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../service/firebase";
+import { Flex, Heading, Button, Stack, Box, Link } from "@chakra-ui/react";
+import { FaFacebook } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { BiLinkExternal } from "react-icons/bi";
+import chat_icon from "../assets/chat-icon.svg";
 
 // component
 import App from "./App";
@@ -34,26 +43,78 @@ function LandingPage(): JSX.Element {
     );
   }
 
-  return <SignIn />;
+  return (
+    <Flex
+      flexDirection="column"
+      width="100wh"
+      height="100vh"
+      backgroundColor="gray.200"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Stack
+        flexDir="column"
+        mb="2"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <img src={chat_icon} className="w-12 h-12" alt="" />
+        <Heading color="teal.400" m={5}>
+          react-chat-app
+        </Heading>
+        <Box minW={{ base: "90%", md: "400px" }}>
+          <Stack
+            spacing={4}
+            p="1rem"
+            backgroundColor="whiteAlpha.900"
+            boxShadow="md"
+          >
+            <SignInWithGoogle />;
+            <SignInWithFacebook />;
+          </Stack>
+        </Box>
+      </Stack>
+      <Link
+        color="teal.500"
+        href="https://github.com/trdat123/react-chat-app"
+        isExternal
+        display="inline-flex"
+        alignItems="center"
+      >
+        View source code on Github <BiLinkExternal className="ml-1" />
+      </Link>
+    </Flex>
+  );
 }
 
-function SignIn() {
-  function signInWithGoogle() {
+function SignInWithGoogle() {
+  function signIn() {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider);
+    signInWithRedirect(auth, provider);
   }
 
   return (
-    <div className="flex h-screen">
-      <div className="m-auto">
-        <button
-          className="button bg-yellow-500 hover:bg-yellow-600"
-          onClick={signInWithGoogle}
-        >
-          Sign in with Google
-        </button>
-      </div>
-    </div>
+    <Button onClick={signIn} leftIcon={<FcGoogle />} width="full">
+      Sign in with Google
+    </Button>
+  );
+}
+
+function SignInWithFacebook() {
+  function signIn() {
+    const provider = new FacebookAuthProvider();
+    signInWithRedirect(auth, provider);
+  }
+
+  return (
+    <Button
+      onClick={signIn}
+      colorScheme="facebook"
+      leftIcon={<FaFacebook />}
+      width="full"
+    >
+      Sign in with Facebook
+    </Button>
   );
 }
 
