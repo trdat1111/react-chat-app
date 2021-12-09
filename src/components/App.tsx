@@ -25,15 +25,20 @@ import { FileObj, MessageObj, RoomDataObj } from "../type";
 import TopBar from "./TopBar";
 import MessageContainer from "./MessageContainer";
 import MessageInput from "./MessageInput";
-import SideBar from "./SideBar";
-import RightNav from "./RightNav";
+import SideBar from "./LeftBar";
+import RightNav from "./RightBar";
 import formatBytes from "../functions/formatBytes";
 
 const App: React.FC = () => {
   // const socket = useContext(SocketContext);
   const user = auth.currentUser;
-  const { roomData, addRoomData, updateMsgInRoom, removeRoom } =
-    useRoomDataStore();
+  const {
+    roomData,
+    addRoomData,
+    updateMsgInRoom,
+    removeRoom,
+    updateJoinedUsersInRoom,
+  } = useRoomDataStore();
   const { setMsgList } = useMsgListStore();
   const { currentRoom, setCurrentRoom } = useCurrentRoomStore();
   const setMembers = useMemberStore((state) => state.setMembers);
@@ -61,8 +66,17 @@ const App: React.FC = () => {
           addRoomData(roomDataObj);
         }
         if (change.type === "modified") {
+          // if a room has been modified
+          // (cannot tell which data is modified because of database desgin, therefore update both messages and joined_users)
+
           // update room when new message comes
           updateMsgInRoom(change.doc.id, change.doc.data().messages);
+
+          // if new users joined
+          updateJoinedUsersInRoom(
+            change.doc.id,
+            change.doc.data().joined_users
+          );
 
           // if users send msg, set hasNewMsg to true for the rest of users in this room
           if (change.doc.data().messages) {
@@ -116,7 +130,9 @@ const App: React.FC = () => {
           // update all sent files to fileList
           const fileMsg = currRoom.messages?.filter(
             (msg: MessageObj) =>
-              !imageTypes.test(msg.type) && msg.type !== "text"
+              !imageTypes.test(msg.type) &&
+              msg.type !== "text" &&
+              msg.type !== "notification"
           );
           const fileArray: FileObj[] = fileMsg?.map((msg: MessageObj) => {
             return {

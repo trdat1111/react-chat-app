@@ -30,8 +30,11 @@ const RoomList: React.FC<{ room: RoomDataObj }> = ({ room }) => {
     if (room.messages.length > 0) {
       const lastMsg: MessageObj = room.messages?.at(-1);
       let showLastMsg = "";
-      const lastMsgUser =
-        lastMsg.id === user?.uid ? "You" : lastMsg.user.split(" ")[0];
+      let lastMsgUser =
+        lastMsg.id === user?.uid
+          ? "You: "
+          : lastMsg.user.split(" ")[0].concat(": ");
+      if (lastMsg.type === "notification") lastMsgUser = "";
 
       if (!isValidUrl(lastMsg.userData) && lastMsg.userData.length > 15) {
         showLastMsg = lastMsg.userData.substring(0, 15).concat("...");
@@ -49,7 +52,8 @@ const RoomList: React.FC<{ room: RoomDataObj }> = ({ room }) => {
             isNewMsg && "font-semibold text-blue-500"
           }`}
         >
-          {lastMsgUser}: {showLastMsg} · {timeStamp}
+          {lastMsgUser}
+          {showLastMsg} · {timeStamp}
         </div>
       );
     }

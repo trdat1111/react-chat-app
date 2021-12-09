@@ -1,13 +1,17 @@
 import { SocketContext, socket } from "../service/socket";
-import {
-  FacebookAuthProvider,
-  GoogleAuthProvider,
-  signInWithRedirect,
-} from "firebase/auth";
+import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../service/firebase";
-import { Flex, Heading, Button, Stack, Box, Link } from "@chakra-ui/react";
-import { FaFacebook } from "react-icons/fa";
+import {
+  Flex,
+  Heading,
+  Button,
+  Stack,
+  Box,
+  Link,
+  Spinner,
+  Center,
+} from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import { BiLinkExternal } from "react-icons/bi";
 import chat_icon from "../assets/chat-icon.svg";
@@ -20,9 +24,15 @@ function LandingPage(): JSX.Element {
 
   if (loading) {
     return (
-      <>
-        <p>Loading...</p>
-      </>
+      <Center className="h-screen">
+        <Spinner
+          thickness="5px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+      </Center>
     );
   }
   if (error) {
@@ -69,8 +79,10 @@ function LandingPage(): JSX.Element {
             backgroundColor="whiteAlpha.900"
             boxShadow="md"
           >
+            <Heading className="text-gray-600" textAlign="center" size="lg">
+              Sign in
+            </Heading>
             <SignInWithGoogle />;
-            <SignInWithFacebook />;
           </Stack>
         </Box>
       </Stack>
@@ -96,24 +108,6 @@ function SignInWithGoogle() {
   return (
     <Button onClick={signIn} leftIcon={<FcGoogle />} width="full">
       Sign in with Google
-    </Button>
-  );
-}
-
-function SignInWithFacebook() {
-  function signIn() {
-    const provider = new FacebookAuthProvider();
-    signInWithRedirect(auth, provider);
-  }
-
-  return (
-    <Button
-      onClick={signIn}
-      colorScheme="facebook"
-      leftIcon={<FaFacebook />}
-      width="full"
-    >
-      Sign in with Facebook
     </Button>
   );
 }

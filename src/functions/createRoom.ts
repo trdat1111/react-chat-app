@@ -13,6 +13,8 @@ import { Modal } from "../service/sweet-alert";
 
 export default async function createRoom() {
   const user = auth.currentUser;
+  // const setCurrentRoom  = useCurrentRoomStore.subscribe(state => state.setCurrentRoom)
+
   const { value: val } = await Modal.fire({
     title: "Enter a room to create",
     input: "text",
@@ -39,6 +41,13 @@ export default async function createRoom() {
       await setDoc(notiRef, {
         hasNewMsg: false,
       });
+
+      // setCurrentRoom({
+      //   roomId: roomSnapshot.id,
+      //   roomName: roomSnapshot.data().room_name,
+      //   totalMember: roomSnapshot.data().joined_users.length,
+      //   members: roomSnapshot.data().joined_users,
+      // });
     }
   }
 }

@@ -8,8 +8,6 @@ import { v4 as uuidv4 } from "uuid";
 import createRoom from "../functions/createRoom";
 import joinRoom from "../functions/joinRoom";
 import { MdGroup, MdGroupAdd } from "react-icons/md";
-// import LazyLoad from "react-lazyload";
-// import { Spinner } from "@chakra-ui/react";
 
 // components
 import Message from "./Message";

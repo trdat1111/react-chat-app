@@ -21,6 +21,7 @@ import { Modal } from "../service/sweet-alert";
 import { AiTwotoneSetting } from "react-icons/ai";
 import image_icon from "../assets/image-icon.svg";
 import file_icon from "../assets/file-icon.svg";
+import { arrayUnion, Timestamp } from "firebase/firestore";
 
 const RightNav = () => {
   const { currentRoom, setCurrentRoom } = useCurrentRoomStore();
@@ -48,6 +49,15 @@ const RightNav = () => {
             userId: user?.uid,
             userName: user?.displayName,
             userAvt: user?.photoURL,
+          }),
+          // add leave notification message
+          messages: arrayUnion({
+            id: user?.uid,
+            user: user?.displayName!,
+            userData: `${user?.displayName} has left`,
+            created_at: Timestamp.now(),
+            photoURL: user?.photoURL!,
+            type: "notification",
           }),
         });
         setCurrentRoom(null);

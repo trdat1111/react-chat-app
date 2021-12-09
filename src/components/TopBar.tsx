@@ -13,8 +13,8 @@ import {
 import { BsInfoCircle, BsListUl } from "react-icons/bs";
 
 // component
-import SideBar from "./SideBar";
-import RightNav from "./RightNav";
+import SideBar from "./LeftBar";
+import RightNav from "./RightBar";
 
 const TopBar: React.FC = () => {
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);

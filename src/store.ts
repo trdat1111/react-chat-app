@@ -15,9 +15,9 @@ export const useFormValueStore = create(
 // roomData
 interface roomDataState {
   roomData: RoomDataObj[] | null;
-  setRoomData: (dataArr: RoomDataObj[]) => void;
   addRoomData: (roomObj: RoomDataObj) => void;
   updateMsgInRoom: (roomId: string, msgList: []) => void;
+  updateJoinedUsersInRoom: (roomId: string, joined_users: []) => void;
   removeRoom: (roomId: string) => void;
 }
 
@@ -25,7 +25,6 @@ export const useRoomDataStore = create<roomDataState>(
   devtools(
     (set, get): roomDataState => ({
       roomData: [],
-      setRoomData: (dataArr) => set({ roomData: dataArr }), // not in use
       addRoomData: (roomObj) =>
         set(
           (state) =>
@@ -40,6 +39,15 @@ export const useRoomDataStore = create<roomDataState>(
               (roomObj: RoomDataObj) => roomObj.id === roomId
             );
             changedRoom.messages = msgList;
+          })
+        ),
+      updateJoinedUsersInRoom: (roomId, joined_users) =>
+        set(
+          produce((draft) => {
+            const changedRoom = draft.roomData.find(
+              (roomObj: RoomDataObj) => roomObj.id === roomId
+            );
+            changedRoom.joined_users = joined_users;
           })
         ),
       removeRoom: (roomId) =>

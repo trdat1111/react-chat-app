@@ -1,4 +1,11 @@
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  setDoc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "../service/firebase";
 import { Modal, Toast } from "../service/sweet-alert";
 
@@ -10,11 +17,6 @@ export default async function joinRoom() {
     confirmButtonColor: "#8B5CF6",
   });
   if (val && val !== "") {
-    // socket.emit("join-room", val, (msg: string) => {
-    //   setRoomValue(val);
-    //   setNoti([...noti, msg]);
-    //   setMsgList([]);
-    // });
     const roomRef = doc(db, `group_messages/${val}`);
     const roomSnapshot = await getDoc(roomRef);
     if (roomSnapshot.exists()) {
@@ -31,12 +33,20 @@ export default async function joinRoom() {
             userName: user?.displayName,
             userAvt: user?.photoURL,
           }),
+          // add notifications message
+          messages: arrayUnion({
+            id: user?.uid,
+            user: user?.displayName!,
+            userData: `${user?.displayName} has joined`,
+            created_at: Timestamp.now(),
+            photoURL: user?.photoURL!,
+            type: "notification",
+          }),
         });
         const notiRef = doc(roomRef, `notifications/${user?.uid}`);
         await setDoc(notiRef, {
           hasNewMsg: false,
         });
-        // addRoomData(roomSnapshot.data());
       }
     } else {
       Toast.fire({

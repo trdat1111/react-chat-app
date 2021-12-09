@@ -12,6 +12,16 @@ const MessageList: React.FC<{
     return user?.uid === authorId ? true : false;
   }
 
+  if (messageObj.type === "notification") {
+    return (
+      <div className="flex justify-center w-full text-center">
+        <p className="font-montserrat font-medium text-sm text-gray-600">
+          {messageObj.userData}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`flex ${
