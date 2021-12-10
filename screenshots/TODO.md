@@ -14,11 +14,40 @@ confirmation when user log out
 - [ ] Understand code flow
 - [ ] Pagination ?
 - [ ] Online and offline status ?
+  
+### 8/12
+- [x] Add responsive to UI
+- [x] Update landing page
+- [ ] Read code flow
+- [x] Fix hosting (createRoom and display in realtime issue)
+- [ ] Wrap up ?
+
+---
+### 9/12
+- [x] Fix loginWithFacebook ?
+- [x] Update loading animation in landing page
+- [x] update joinRoom and createRoom functions, add join and leave room notifications
+- [ ] Lazyload
+- [ ] Delete messages
+
+---
+### 10/12
+- [x] Send videos
+- [x] Update video state
+- [ ] Change room avatar
+- [ ] Delete messages ?
+- [ ] Update sign out button ?
+- [ ] Wrap up ?
+
+---
+### 11/12
+- [ ] Change room avatar
+- [ ] Wrap up
+- [ ] Start learning cypressjs
 
 ## Further features:
 - [x] Leave rooms
 - [ ] Delete messages
 - [ ] Delete rooms
-- [ ] Private messages
-- [ ] Send pictures and videos
+- [x] Send pictures and videos
 - [ ] Chat video and phone call ?

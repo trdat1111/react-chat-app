@@ -7,6 +7,7 @@ const MessagePill: React.FC<{
   fromSelf: (authorId: string) => boolean;
 }> = ({ messageObj, fromSelf }) => {
   const imageTypes = /(gif|jpe?g|tiff?|png|webp)$/i;
+  const videoTypes = /(mp4|mov|flv|3gp)$/i;
   // const otherTypes = [/pptx/, /doc/, /docx/];
 
   if (imageTypes.test(messageObj.type)) {
@@ -21,7 +22,33 @@ const MessagePill: React.FC<{
           alt="users resource"
           className="object-cover max-h-36 md:max-h-44 lg:max-h-48 rounded-xl"
         />
-        {/* <PreloadImage src={messageObj.userData} /> */}
+      </div>
+    );
+  } else if (videoTypes.test(messageObj.type)) {
+    // if userData is a video
+    return (
+      <div className="inline-block max-w-xl my-1">
+        {!fromSelf(messageObj.id) && (
+          <p className="font-nunito text-sm text-gray-500">{messageObj.user}</p>
+        )}
+        <video
+          className="video-js max-h-36 md:max-h-44 lg:max-h-48 rounded-md"
+          preload="metadata"
+          controls
+        >
+          <source src={messageObj.userData} type="video/mp4" />
+          <p>
+            To view this video please enable JavaScript, and consider upgrading
+            to a web browser that
+            <a
+              href="https://videojs.com/html5-video-support/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              supports HTML5 video
+            </a>
+          </p>
+        </video>
       </div>
     );
   } else if (isValidUrl(messageObj.userData)) {

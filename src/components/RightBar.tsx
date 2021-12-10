@@ -65,6 +65,8 @@ const RightNav = () => {
     });
   }
 
+  function changeAvatar() {}
+
   return (
     <div className="border-l-2">
       <div className="flex justify-center items-center border-b-2 p-4">
@@ -130,6 +132,13 @@ const RightNav = () => {
           <AiTwotoneSetting className="w-5 h-5 mr-1" />
           Options
         </p>
+        <div
+          onClick={changeAvatar}
+          className="flex flex-row items-center w-full text-gray-900 hover:bg-gray-100 cursor-pointer p-2"
+        >
+          <BsBoxArrowLeft className="w-7 h-7 mr-3" />
+          Change room avatar
+        </div>
         <div
           onClick={leaveRoom}
           className="flex flex-row items-center w-full text-red-500 hover:bg-red-100 cursor-pointer p-2"

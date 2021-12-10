@@ -16,7 +16,6 @@ const MessageContainer: React.FC = () => {
   const msgList = useMsgListStore((state) => state.msgList);
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
   const dummy: any = useRef();
-  const container: any = useRef();
 
   const scrollToBottom = () => {
     dummy.current.scrollIntoView();
@@ -35,10 +34,7 @@ const MessageContainer: React.FC = () => {
   }, [currentRoom, msgList]);
 
   return (
-    <SimpleBar
-      ref={container}
-      className="overflow-y-auto h-4/5 border-t-2 border-b-2 overflow-x-hidden bg-gray-100 p-2"
-    >
+    <SimpleBar className="overflow-y-auto h-4/5 border-t-2 border-b-2 overflow-x-hidden bg-gray-100 p-2">
       {currentRoom ? (
         msgList?.map((messageObj) => (
           <Message key={uuidv4()} messageObj={messageObj} />

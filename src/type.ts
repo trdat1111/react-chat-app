@@ -7,6 +7,7 @@ export type RoomDataObj =
       room_name: string;
       messages: MessageObj[];
       modified_at: Timestamp;
+      room_avatar?: string;
     }
   | DocumentData;
 

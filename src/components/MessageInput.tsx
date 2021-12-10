@@ -16,7 +16,7 @@ import {
 import { MessageObj } from "../type";
 import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
 import { RiAttachment2, RiImage2Line } from "react-icons/ri";
-import { Tooltip } from "@chakra-ui/react";
+import { Progress, Tooltip } from "@chakra-ui/react";
 import { Toast } from "../service/sweet-alert";
 import updateNotiCollection from "../functions/updateNotiCollection";
 
@@ -26,6 +26,7 @@ const MessageInput: React.FC = () => {
   const { formValue, setFormValue } = useFormValueStore();
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
   const addMsgToList = useMsgListStore((state) => state.addMsgToList);
+  const [isSending, setIsSending] = React.useState(false);
 
   async function addDataToFirestore(
     room: typeof currentRoom,
@@ -85,9 +86,14 @@ const MessageInput: React.FC = () => {
         "state_changed",
         (fileSnapshot) => {
           // pedding process
+          setIsSending(true);
         },
         (error) => {
-          console.log(error);
+          Toast.fire({
+            icon: "error",
+            title: error,
+          });
+          e.target.value = "";
         },
         () => {
           // when success, add file url to firestore
@@ -106,6 +112,7 @@ const MessageInput: React.FC = () => {
             addMsgToList(message);
             addDataToFirestore(currentRoom, message);
             e.target.value = "";
+            setIsSending(false);
           });
         }
       );
@@ -122,7 +129,8 @@ const MessageInput: React.FC = () => {
         }}
       >
         <div className="flex flex-col w-full">
-          <div className="flex flex-row">
+          {isSending && <Progress size="xs" isIndeterminate />}
+          <div className="flex flex-row items-center">
             <Tooltip label="Send image" placement="top">
               <label
                 htmlFor="image-upload"

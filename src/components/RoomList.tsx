@@ -36,8 +36,8 @@ const RoomList: React.FC<{ room: RoomDataObj }> = ({ room }) => {
           : lastMsg.user.split(" ")[0].concat(": ");
       if (lastMsg.type === "notification") lastMsgUser = "";
 
-      if (!isValidUrl(lastMsg.userData) && lastMsg.userData.length > 15) {
-        showLastMsg = lastMsg.userData.substring(0, 15).concat("...");
+      if (!isValidUrl(lastMsg.userData) && lastMsg.userData.length > 20) {
+        showLastMsg = lastMsg.userData.substring(0, 20).concat("...");
       } else showLastMsg = lastMsg.userData;
 
       if (isValidUrl(lastMsg.userData)) {

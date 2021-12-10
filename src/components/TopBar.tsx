@@ -18,6 +18,8 @@ import RightNav from "./RightBar";
 
 const TopBar: React.FC = () => {
   const currentRoom = useCurrentRoomStore((state) => state.currentRoom);
+  const pluralize = (count: number, noun: string, suffix = "s") =>
+    `${count} ${noun}${count !== 1 ? suffix : ""}`;
 
   function shareRoom() {
     Toast.fire({
@@ -74,7 +76,7 @@ const TopBar: React.FC = () => {
             </ul>
             <div className="flex flex-row items-center text-base font-normal">
               <HiUserGroup className="mr-1" />
-              <p>{currentRoom?.totalMember} members</p>
+              <p>{pluralize(currentRoom?.totalMember, "member")}</p>
             </div>
           </>
         )}
