@@ -38,7 +38,7 @@ const MessageList: React.FC<{
           fromSelf(messageObj.id) ? "flex-row" : "flex-row-reverse"
         }`}
       >
-        <div className="opacity-0 ring-1 bg-white h-6 rounded-md font-mono text-xs delay-200 transition-all duration-100 mx-2 px-1 pt-1 group-hover:opacity-90">
+        <div className="truncate opacity-0 ring-1 bg-white h-6 rounded-md font-mono text-xs delay-200 transition-all duration-100 mx-2 px-1 pt-1 group-hover:opacity-90">
           {moment(messageObj.created_at.toDate()).format("HH:mm · MMM D YYYY")}
         </div>
         <MessagePill messageObj={messageObj} fromSelf={fromSelf} />

@@ -86,9 +86,6 @@ const RoomList: React.FC<{ room: RoomDataObj }> = ({ room }) => {
         alt=""
         className="flex w-12 h-12 rounded-2xl m-2 justify-center items-center"
       />
-      {/* <div className="flex w-12 h-12 rounded-full group-hover:rounded-xl bg-gray-200 m-2 justify-center items-center">
-        <GrGroup className="w-6 h-6" />
-      </div> */}
       <div className="flex flex-col font-sans overflow-ellipsis overflow-hidden">
         <p className="truncate">{room.room_name}</p>
         {displayLastMsg(room)}

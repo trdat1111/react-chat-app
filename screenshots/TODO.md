@@ -41,7 +41,15 @@ confirmation when user log out
 
 ---
 ### 11/12
+- [x] Videojs
 - [ ] Change room avatar
+- [ ] update readme file
+- [ ] Wrap up
+- [ ] Start learning cypressjs
+
+---
+### 12/12
+- [ ] update readme file
 - [ ] Wrap up
 - [ ] Start learning cypressjs
 

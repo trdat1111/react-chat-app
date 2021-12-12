@@ -1,6 +1,8 @@
+import { Spinner } from "@chakra-ui/react";
 import React from "react";
 import isValidUrl from "../functions/isValidUrl";
 import { MessageObj } from "../type";
+import VideoJs from "./VideoJs";
 
 const MessagePill: React.FC<{
   messageObj: MessageObj;
@@ -8,7 +10,21 @@ const MessagePill: React.FC<{
 }> = ({ messageObj, fromSelf }) => {
   const imageTypes = /(gif|jpe?g|tiff?|png|webp)$/i;
   const videoTypes = /(mp4|mov|flv|3gp)$/i;
-  // const otherTypes = [/pptx/, /doc/, /docx/];
+  const [isImgLoading, setIsImgLoading] = React.useState(false);
+
+  const videoJsOptions = {
+    // lookup the options in the docs for more options
+    autoplay: false,
+    controls: true,
+    preload: "metadata",
+    responsive: true,
+    sources: [
+      {
+        src: messageObj.userData,
+        type: "video/mp4",
+      },
+    ],
+  };
 
   if (imageTypes.test(messageObj.type)) {
     // if userData is an image
@@ -21,7 +37,10 @@ const MessagePill: React.FC<{
           src={messageObj.userData}
           alt="users resource"
           className="object-cover max-h-36 md:max-h-44 lg:max-h-48 rounded-xl"
+          onLoadStart={() => setIsImgLoading(true)}
+          onLoad={() => setIsImgLoading(false)}
         />
+        {isImgLoading && <Spinner />}
       </div>
     );
   } else if (videoTypes.test(messageObj.type)) {
@@ -31,24 +50,7 @@ const MessagePill: React.FC<{
         {!fromSelf(messageObj.id) && (
           <p className="font-nunito text-sm text-gray-500">{messageObj.user}</p>
         )}
-        <video
-          className="video-js max-h-36 md:max-h-44 lg:max-h-48 rounded-md"
-          preload="metadata"
-          controls
-        >
-          <source src={messageObj.userData} type="video/mp4" />
-          <p>
-            To view this video please enable JavaScript, and consider upgrading
-            to a web browser that
-            <a
-              href="https://videojs.com/html5-video-support/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              supports HTML5 video
-            </a>
-          </p>
-        </video>
+        <VideoJs options={videoJsOptions} />
       </div>
     );
   } else if (isValidUrl(messageObj.userData)) {

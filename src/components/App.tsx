@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-// import { SocketContext } from "../service/socket";
 import {
   query,
   onSnapshot,
@@ -30,7 +29,6 @@ import RightNav from "./RightBar";
 import formatBytes from "../functions/formatBytes";
 
 const App: React.FC = () => {
-  // const socket = useContext(SocketContext);
   const user = auth.currentUser;
   const {
     roomData,

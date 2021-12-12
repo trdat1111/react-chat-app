@@ -56,7 +56,6 @@ const MessageInput: React.FC = () => {
         photoURL: user.photoURL!,
         type: "text",
       };
-      // socket.emit("emit-message", socket.id, formValue, roomValue);
       addMsgToList(message);
       addDataToFirestore(currentRoom, message);
       setFormValue("");

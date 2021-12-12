@@ -14,13 +14,11 @@ import { BsListUl } from "react-icons/bs";
 
 const SideBar: React.FC = () => {
   const user = auth.currentUser;
-  // const socket = useContext(SocketContext);
   const roomData = useRoomDataStore((state) => state.roomData);
 
   function SignOut(): JSX.Element {
     function handleSignOut() {
       signOut(auth);
-      // socket.disconnect();
     }
 
     return (

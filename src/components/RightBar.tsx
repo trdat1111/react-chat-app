@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Members, FileObj } from "../type";
 import { arrayRemove, doc, updateDoc } from "@firebase/firestore";
 import { auth, db } from "../service/firebase";
-import { Modal } from "../service/sweet-alert";
+import { Modal as SweetModal } from "../service/sweet-alert";
 import { AiTwotoneSetting } from "react-icons/ai";
 import image_icon from "../assets/image-icon.svg";
 import file_icon from "../assets/file-icon.svg";
@@ -31,7 +31,7 @@ const RightNav = () => {
   const user = auth.currentUser;
 
   function leaveRoom() {
-    Modal.fire({
+    SweetModal.fire({
       title: `Leave ${currentRoom?.roomName}?`,
       icon: "question",
       showConfirmButton: true,
@@ -64,8 +64,6 @@ const RightNav = () => {
       }
     });
   }
-
-  function changeAvatar() {}
 
   return (
     <div className="border-l-2">
@@ -133,17 +131,10 @@ const RightNav = () => {
           Options
         </p>
         <div
-          onClick={changeAvatar}
-          className="flex flex-row items-center w-full text-gray-900 hover:bg-gray-100 cursor-pointer p-2"
-        >
-          <BsBoxArrowLeft className="w-7 h-7 mr-3" />
-          Change room avatar
-        </div>
-        <div
           onClick={leaveRoom}
           className="flex flex-row items-center w-full text-red-500 hover:bg-red-100 cursor-pointer p-2"
         >
-          <BsBoxArrowLeft className="w-7 h-7 mr-3" />
+          <BsBoxArrowLeft className="w-6 h-6 mr-3" />
           Leave Room
         </div>
       </div>
@@ -191,7 +182,7 @@ const FilesTab: React.FC<{ fileList: FileObj[] }> = ({ fileList }) => {
   return (
     <div>
       <SimpleBar
-        className="overflow-y-auto h-4/6"
+        className="overflow-y-auto h-3/6"
         autoHide={false}
         forceVisible="y"
       >
